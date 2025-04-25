@@ -14,8 +14,12 @@ const router = express.Router();
 // GET all properties for a user
 router.get('/:userId', async (req, res, next) => {
   try {
+    console.log(`GET /properties/${req.params.userId} requested`);
+
     const userId = Number(req.params.userId);
     if (!userId) {
+      console.warn(`Invalid userId provided: ${req.params.userId}`);
+
       throw new ClientError(400, 'userId is required');
     }
 
@@ -25,8 +29,12 @@ router.get('/:userId', async (req, res, next) => {
         ORDER by "propertyId"
         `;
     const result = await db.query(sql, [userId]);
+    console.log(`Found ${result.rows.length} properties for user ${userId}`);
+
     res.json(result.rows);
   } catch (err) {
+    console.error(`Error in GET /properties/${req.params.userId}:`, err);
+
     next(err);
   }
 });
@@ -34,8 +42,12 @@ router.get('/:userId', async (req, res, next) => {
 // GET a property by ID
 router.get('/property/:propertyId', async (req, res, next) => {
   try {
+    console.log(`GET /properties/property/${req.params.propertyId} requested`);
+
     const propertyId = Number(req.params.propertyId);
     if (!propertyId) {
+      console.warn(`Invalid propertyId provided: ${req.params.propertyId}`);
+
       throw new ClientError(400, 'propertyId is required');
     }
 
@@ -44,11 +56,20 @@ router.get('/property/:propertyId', async (req, res, next) => {
         WHERE "propertyId" = $1
         `;
     const result = await db.query(sql, [propertyId]);
+    console.log(`Found property with id ${propertyId}`);
+
     if (result.rows.length === 0) {
+      console.warn(`Property with id ${propertyId} not found`);
+
       throw new ClientError(404, `Property with id ${propertyId} not found`);
     }
     res.json(result.rows[0]);
   } catch (err) {
+    console.error(
+      `Error in GET /properties/property/${req.params.propertyId}:`,
+      err
+    );
+
     next(err);
   }
 });
@@ -56,6 +77,8 @@ router.get('/property/:propertyId', async (req, res, next) => {
 // POST a new property
 router.post('/', async (req, res, next) => {
   try {
+    console.log('POST /properties requested');
+
     const {
       userId,
       address,
@@ -80,6 +103,8 @@ router.post('/', async (req, res, next) => {
       !built ||
       !lastSale
     ) {
+      console.warn('Missing required fields');
+
       throw new ClientError(400, 'Missing required fields');
     }
 
@@ -111,9 +136,15 @@ router.post('/', async (req, res, next) => {
       built,
       lastSale,
     ];
+    console.log('Params:', params);
+
     const result = await db.query(sql, params);
+    console.log('Result:', result.rows[0]);
+
     res.status(201).json(result.rows[0]);
   } catch (err) {
+    console.error('Error in POST /properties:', err);
+
     next(err);
   }
 });
@@ -126,6 +157,7 @@ router.put('/:propertyId', async (req, res, next) => {
 
     const propertyId = Number(req.params.propertyId);
     if (!propertyId) {
+      console.warn('Invalid propertyId provided:', req.params.propertyId);
       throw new ClientError(400, 'propertyId is required');
     }
 
@@ -188,9 +220,13 @@ router.put('/:propertyId', async (req, res, next) => {
 // DELETE a property
 router.delete('/:propertyId', async (req, res, next) => {
   try {
+    console.log('Delete Property Request params:', req.params);
+
     const propertyId = Number(req.params.propertyId);
 
     if (!propertyId) {
+      console.warn('Invalid propertyId provided:', req.params.propertyId);
+
       throw new ClientError(400, 'propertyId is required');
     }
 
@@ -206,8 +242,12 @@ router.delete('/:propertyId', async (req, res, next) => {
       throw new ClientError(404, `Property with id ${propertyId} not found`);
     }
 
+    console.log('Deleted property:', result.rows[0]);
+
     res.sendStatus(204);
   } catch (err) {
+    console.error('Error in DELETE /properties/:propertyId:', err);
+
     next(err);
   }
 });

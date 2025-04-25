@@ -14,8 +14,12 @@ const router = express.Router();
 // GET all transactions for a user
 router.get('/:userId', async (req, res, next) => {
   try {
+    console.log(`GET /transactions/${req.params.userId} requested`);
+
     const userId = Number(req.params.userId);
     if (!userId) {
+      console.warn(`Invalid userId provided: ${req.params.userId}`);
+
       throw new ClientError(400, 'userId is required');
     }
 
@@ -26,8 +30,12 @@ router.get('/:userId', async (req, res, next) => {
         `;
 
     const result = await db.query(sql, [userId]);
+    console.log(`Found ${result.rows.length} transactions for user ${userId}`);
+
     res.json(result.rows);
   } catch (err) {
+    console.error(`Error in GET /transactions/${req.params.userId}:`, err);
+
     next(err);
   }
 });
@@ -35,8 +43,12 @@ router.get('/:userId', async (req, res, next) => {
 // POST a new transaction
 router.post('/', async (req, res, next) => {
   try {
+    console.log('POST /transactions requested');
+
     const { userId, date, amount, category, description } = req.body;
     if (!userId || !date || !amount || !category || !description) {
+      console.warn('Missing required fields');
+
       throw new ClientError(400, 'Missing required fields');
     }
 
@@ -48,8 +60,11 @@ router.post('/', async (req, res, next) => {
 
     const params = [userId, date, amount, category, description];
     const result = await db.query(sql, params);
+    console.log('Result:', result.rows[0]);
+
     res.status(201).json(result.rows[0]);
   } catch (err) {
+    console.error('Error in POST /transactions:', err);
     next(err);
   }
 });
@@ -57,6 +72,9 @@ router.post('/', async (req, res, next) => {
 // PUT to update a transaction
 router.put('/:transactionId', async (req, res, next) => {
   try {
+    console.log('Put Transaction Request params:', req.params);
+    console.log('Put Transaction Request body:', req.body);
+
     const transactionId = Number(req.params.transactionId);
     const { date, description, category, amount } = req.body;
 
@@ -76,7 +94,7 @@ router.put('/:transactionId', async (req, res, next) => {
 
     const params = [date, description, category, amount, transactionId];
     const result = await db.query(sql, params);
-
+    console.log('Result:', result.rows[0]);
     if (result.rows.length === 0) {
       throw new ClientError(
         404,
@@ -86,6 +104,8 @@ router.put('/:transactionId', async (req, res, next) => {
 
     res.json(result.rows[0]);
   } catch (err) {
+    console.error('Error in PUT /transactions/:transactionId:', err);
+
     next(err);
   }
 });
@@ -93,6 +113,8 @@ router.put('/:transactionId', async (req, res, next) => {
 // DELETE a transaction
 router.delete('/:transactionId', async (req, res, next) => {
   try {
+    console.log('Delete Transaction Request params:', req.params);
+
     const transactionId = Number(req.params.transactionId);
 
     if (!transactionId) {
@@ -106,7 +128,7 @@ router.delete('/:transactionId', async (req, res, next) => {
       `;
 
     const result = await db.query(sql, [transactionId]);
-
+    console.log('Result:', result.rows[0]);
     if (result.rows.length === 0) {
       throw new ClientError(
         404,
@@ -116,6 +138,8 @@ router.delete('/:transactionId', async (req, res, next) => {
 
     res.sendStatus(204);
   } catch (err) {
+    console.error('Error in DELETE /transactions/:transactionId:', err);
+
     next(err);
   }
 });
