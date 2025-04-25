@@ -48,5 +48,9 @@
     "stylelint-config-standard": "^32.0.0",
     "tsx": "^4.7.0",
     "typescript": "^5.4.3"
+  },
+  "dependencies": {
+    "@radix-ui/react-progress": "^1.1.4",
+    "express": "^5.1.0"
   }
 }

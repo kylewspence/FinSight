@@ -15,6 +15,7 @@ CREATE TABLE "users" (
 
 CREATE TABLE "properties" (
   "propertyId" serial PRIMARY KEY,
+  "userId" integer REFERENCES "users" ("userId"),
   "address" text,
   "estValue" integer,
   "range" integer,
@@ -28,6 +29,7 @@ CREATE TABLE "properties" (
 
 CREATE TABLE "transactions" (
   "transactionId" serial PRIMARY KEY,
+  "userId" integer REFERENCES "users" ("userId"),
   "date" integer,
   "description" text,
   "category" text,
@@ -36,6 +38,7 @@ CREATE TABLE "transactions" (
 
 CREATE TABLE "holdings" (
   "holdingId" serial PRIMARY KEY,
+  "userId" integer REFERENCES "users" ("userId"),
   "shares" integer,
   "symbol" text,
   "sector" text
@@ -43,17 +46,10 @@ CREATE TABLE "holdings" (
 
 CREATE TABLE "insights" (
   "insightsId" serial PRIMARY KEY,
+  "userId" integer REFERENCES "users" ("userId"),
   "goals" text,
   "health" integer,
   "ageGroupCompare" integer,
   "spendingAlert" text,
   "savingsRate" text
 );
-
-ALTER TABLE "properties" ADD FOREIGN KEY ("propertyId") REFERENCES "users" ("userId");
-
-ALTER TABLE "transactions" ADD FOREIGN KEY ("transactionId") REFERENCES "users" ("userId");
-
-ALTER TABLE "holdings" ADD FOREIGN KEY ("holdingId") REFERENCES "users" ("userId");
-
-ALTER TABLE "insights" ADD FOREIGN KEY ("insightsId") REFERENCES "users" ("userId");

@@ -3,7 +3,7 @@ import 'dotenv/config';
 import express from 'express';
 import pg from 'pg';
 import { ClientError, errorMiddleware } from './lib/index.js';
-
+import propertyRoutes from './property-routes.js';
 const db = new pg.Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
@@ -26,12 +26,18 @@ app.get('/api/hello', (req, res) => {
   res.json({ message: 'Hello, World!' });
 });
 
+app.use('/api/properties', propertyRoutes);
+
 /*
  * Handles paths that aren't handled by any other route handler.
  * It responds with `index.html` to support page refreshes with React Router.
  * This must be the _last_ route, just before errorMiddleware.
  */
 app.get('*', (req, res) => res.sendFile(`${reactStaticDir}/index.html`));
+app.get('/api/test', (req, res) => {
+  console.log('Test endpoint hit!');
+  res.json({ message: 'API test endpoint working' });
+});
 
 app.use(errorMiddleware);
 
