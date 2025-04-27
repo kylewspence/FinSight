@@ -2,7 +2,7 @@
 import 'dotenv/config';
 import express from 'express';
 import pg from 'pg';
-import { ClientError, errorMiddleware } from './lib/index.js';
+import { ClientError, errorMiddleware, authMiddleware } from './lib/index.js';
 import propertyRoutes from './property-routes.js';
 import transactionRoutes from './transaction-routes.js';
 import authRoutes from './auth-routes.js';
