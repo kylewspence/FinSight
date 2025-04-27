@@ -1,5 +1,5 @@
 import express from 'express';
-import { ClientError } from './lib/index.js';
+import { ClientError, authMiddleware } from './lib/index.js';
 import pg from 'pg';
 
 const db = new pg.Pool({
@@ -10,16 +10,16 @@ const db = new pg.Pool({
 });
 
 const router = express.Router();
+router.use(authMiddleware);
 
 // GET all transactions for a user
-router.get('/:userId', async (req, res, next) => {
+router.get('/', async (req, res, next) => {
   try {
-    console.log(`GET /transactions/${req.params.userId} requested`);
+    console.log(`GET /transactions/${req.user?.userId} requested`);
 
-    const userId = Number(req.params.userId);
+    const userId = Number(req.user?.userId);
     if (!userId) {
-      console.warn(`Invalid userId provided: ${req.params.userId}`);
-
+      console.warn(`Invalid userId provided: ${req.user?.userId}`);
       throw new ClientError(400, 'userId is required');
     }
 
@@ -34,8 +34,7 @@ router.get('/:userId', async (req, res, next) => {
 
     res.json(result.rows);
   } catch (err) {
-    console.error(`Error in GET /transactions/${req.params.userId}:`, err);
-
+    console.error(`Error in GET /transactions/${req.user?.userId}:`, err);
     next(err);
   }
 });
@@ -45,10 +44,14 @@ router.post('/', async (req, res, next) => {
   try {
     console.log('POST /transactions requested');
 
-    const { userId, date, amount, category, description } = req.body;
-    if (!userId || !date || !amount || !category || !description) {
-      console.warn('Missing required fields');
+    const userId = Number(req.user?.userId);
+    if (!userId) {
+      throw new ClientError(401, 'Authentication required');
+    }
 
+    const { date, amount, category, description } = req.body;
+    if (!date || !amount || !category || !description) {
+      console.warn('Missing required fields');
       throw new ClientError(400, 'Missing required fields');
     }
 
@@ -75,12 +78,31 @@ router.put('/:transactionId', async (req, res, next) => {
     console.log('Put Transaction Request params:', req.params);
     console.log('Put Transaction Request body:', req.body);
 
-    const transactionId = Number(req.params.transactionId);
-    const { date, description, category, amount } = req.body;
+    const userId = Number(req.user?.userId);
+    if (!userId) {
+      throw new ClientError(401, 'Authentication required');
+    }
 
+    const transactionId = Number(req.params.transactionId);
     if (!transactionId) {
       throw new ClientError(400, 'transactionId is required');
     }
+
+    // Verify ownership
+    const verifyOwnerSql = `
+        SELECT * FROM "transactions" 
+        WHERE "transactionId" = $1 AND "userId" = $2
+      `;
+    const ownershipResult = await db.query(verifyOwnerSql, [
+      transactionId,
+      userId,
+    ]);
+
+    if (ownershipResult.rows.length === 0) {
+      throw new ClientError(403, 'Not authorized to update this transaction');
+    }
+
+    const { date, description, category, amount } = req.body;
 
     const sql = `
         UPDATE "transactions"
@@ -115,10 +137,27 @@ router.delete('/:transactionId', async (req, res, next) => {
   try {
     console.log('Delete Transaction Request params:', req.params);
 
-    const transactionId = Number(req.params.transactionId);
+    const userId = Number(req.user?.userId);
+    if (!userId) {
+      throw new ClientError(401, 'Authentication required');
+    }
 
+    const transactionId = Number(req.params.transactionId);
     if (!transactionId) {
       throw new ClientError(400, 'transactionId is required');
+    }
+
+    // Verify ownership
+    const verifyOwnerSql = `
+    SELECT * FROM "transactions" 
+    WHERE "transactionId" = $1 AND "userId" = $2
+    `;
+    const ownershipResult = await db.query(verifyOwnerSql, [
+      transactionId,
+      userId,
+    ]);
+    if (ownershipResult.rows.length === 0) {
+      throw new ClientError(403, 'Not authorized to delete this transaction');
     }
 
     const sql = `
