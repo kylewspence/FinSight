@@ -5,6 +5,7 @@ import pg from 'pg';
 import { ClientError, errorMiddleware } from './lib/index.js';
 import propertyRoutes from './property-routes.js';
 import transactionRoutes from './transaction-routes.js';
+import authRoutes from './auth-routes.js';
 
 const db = new pg.Pool({
   connectionString: process.env.DATABASE_URL,
@@ -28,8 +29,14 @@ app.get('/api/hello', (req, res) => {
   res.json({ message: 'Hello, World!' });
 });
 
+// Property Routes
 app.use('/api/properties', propertyRoutes);
+
+// Transaction Routes
 app.use('/api/transactions', transactionRoutes);
+
+// Auth Routes
+app.use('/api/auth', authRoutes);
 
 /*
  * Handles paths that aren't handled by any other route handler.
