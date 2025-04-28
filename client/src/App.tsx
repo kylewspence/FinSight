@@ -1,35 +1,48 @@
-import { useEffect, useState } from 'react';
-import reactLogo from './assets/react.svg';
-import viteLogo from '/vite.svg';
+
 import './App.css';
+import { Routes } from 'react-router-dom';
+import { Route } from 'react-router-dom';
+import LandingPage from './pages/LandingPage';
+
+import LoginForm from './pages/LoginPage';
+import SignUpForm from './pages/SignUp';
+import Layout from './components/Layout';
+import Dashboard from './pages/Dashboard';
+
+
 
 export default function App() {
-  const [serverData, setServerData] = useState('');
-
-  useEffect(() => {
-    async function readServerData() {
-      const resp = await fetch('/api/hello');
-      const data = await resp.json();
-
-      console.log('Data from server:', data);
-
-      setServerData(data.message);
-    }
-
-    readServerData();
-  }, []);
-
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank" rel="noreferrer">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank" rel="noreferrer">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>{serverData}</h1>
-    </>
+    <Routes>
+      <Route path="/" element={<Layout />}>
+        <Route index element={<LandingPage />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        {"/* Add more routes here */"}
+  
+      <Route path="/login" element={<LoginForm />} />
+      <Route path="/signup" element={<SignUpForm />} />
+      </Route>
+    </Routes>
   );
 }
+
+
+
+
+
+
+
+// const [serverData, setServerData] = useState('');
+
+// useEffect(() => {
+//   async function readServerData() {
+//     const resp = await fetch('/api/hello');
+//     const data = await resp.json();
+
+//     console.log('Data from server:', data);
+
+//     setServerData(data.message);
+//   }
+
+//   readServerData();
+// }, []);
