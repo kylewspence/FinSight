@@ -1,4 +1,4 @@
-import { ClientError } from './lib/index.js';
+import { ClientError, authMiddleware } from './lib/index.js';
 import express from 'express';
 import pg from 'pg';
 
@@ -10,15 +10,17 @@ const db = new pg.Pool({
 });
 
 const router = express.Router();
+router.use(authMiddleware);
 
 // GET all properties for a user
-router.get('/:userId', async (req, res, next) => {
+router.get('/', async (req, res, next) => {
   try {
-    console.log(`GET /properties/${req.params.userId} requested`);
+    console.log(`GET /properties/${req.user?.userId} requested`);
 
-    const userId = Number(req.params.userId);
+    // Verify user is authenticated
+    const userId = Number(req.user?.userId);
     if (!userId) {
-      console.warn(`Invalid userId provided: ${req.params.userId}`);
+      console.warn(`Invalid userId provided: ${req.user?.userId}`);
 
       throw new ClientError(400, 'userId is required');
     }
@@ -33,7 +35,7 @@ router.get('/:userId', async (req, res, next) => {
 
     res.json(result.rows);
   } catch (err) {
-    console.error(`Error in GET /properties/${req.params.userId}:`, err);
+    console.error(`Error in GET /properties/${req.user?.userId}:`, err);
 
     next(err);
   }
@@ -44,6 +46,11 @@ router.get('/property/:propertyId', async (req, res, next) => {
   try {
     console.log(`GET /properties/property/${req.params.propertyId} requested`);
 
+    const userId = Number(req.user?.userId);
+    if (!userId) {
+      throw new ClientError(401, 'Authentication required');
+    }
+
     const propertyId = Number(req.params.propertyId);
     if (!propertyId) {
       console.warn(`Invalid propertyId provided: ${req.params.propertyId}`);
@@ -53,16 +60,15 @@ router.get('/property/:propertyId', async (req, res, next) => {
 
     const sql = `
         SELECT * from "properties"
-        WHERE "propertyId" = $1
+        WHERE "propertyId" = $1 AND "userId" = $2
         `;
-    const result = await db.query(sql, [propertyId]);
+    const result = await db.query(sql, [propertyId, userId]);
     console.log(`Found property with id ${propertyId}`);
-
     if (result.rows.length === 0) {
       console.warn(`Property with id ${propertyId} not found`);
-
       throw new ClientError(404, `Property with id ${propertyId} not found`);
     }
+
     res.json(result.rows[0]);
   } catch (err) {
     console.error(
@@ -79,8 +85,15 @@ router.post('/', async (req, res, next) => {
   try {
     console.log('POST /properties requested');
 
+    // Verify user is authenticated
+    const userId = Number(req.user?.userId);
+    if (!userId) {
+      console.warn(`Invalid userId provided: ${req.user?.userId}`);
+
+      throw new ClientError(401, 'Authentication required');
+    }
+
     const {
-      userId,
       address,
       estValue,
       range,
@@ -92,7 +105,6 @@ router.post('/', async (req, res, next) => {
       lastSale,
     } = req.body;
     if (
-      !userId ||
       !address ||
       !estValue ||
       !range ||
@@ -104,7 +116,6 @@ router.post('/', async (req, res, next) => {
       !lastSale
     ) {
       console.warn('Missing required fields');
-
       throw new ClientError(400, 'Missing required fields');
     }
 
@@ -155,10 +166,30 @@ router.put('/:propertyId', async (req, res, next) => {
     console.log('Put Property Request params:', req.params);
     console.log('Put Property Request body:', req.body);
 
+    // Verify user is authenticated
+    const userId = Number(req.user?.userId);
+    if (!userId) {
+      throw new ClientError(401, 'Authentication required');
+    }
+
     const propertyId = Number(req.params.propertyId);
     if (!propertyId) {
       console.warn('Invalid propertyId provided:', req.params.propertyId);
       throw new ClientError(400, 'propertyId is required');
+    }
+
+    // Verify Owner
+    const verifyOwnerSql = `
+     SELECT * FROM "properties" 
+     WHERE "propertyId" = $1 AND "userId" = $2
+   `;
+    const ownershipResult = await db.query(verifyOwnerSql, [
+      propertyId,
+      userId,
+    ]);
+
+    if (ownershipResult.rows.length === 0) {
+      throw new ClientError(403, 'Not authorized to update this property');
     }
 
     const {
@@ -222,12 +253,28 @@ router.delete('/:propertyId', async (req, res, next) => {
   try {
     console.log('Delete Property Request params:', req.params);
 
-    const propertyId = Number(req.params.propertyId);
+    const userId = Number(req.user?.userId);
+    if (!userId) {
+      throw new ClientError(401, 'Authentication required');
+    }
 
+    const propertyId = Number(req.params.propertyId);
     if (!propertyId) {
       console.warn('Invalid propertyId provided:', req.params.propertyId);
-
       throw new ClientError(400, 'propertyId is required');
+    }
+
+    // Verify ownership
+    const verifyOwnerSql = `
+    SELECT * FROM "properties" 
+    WHERE "propertyId" = $1 AND "userId" = $2
+    `;
+    const ownershipResult = await db.query(verifyOwnerSql, [
+      propertyId,
+      userId,
+    ]);
+    if (ownershipResult.rows.length === 0) {
+      throw new ClientError(403, 'Not authorized to delete this property');
     }
 
     const sql = `

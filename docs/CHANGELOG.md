@@ -22,6 +22,9 @@ All notable changes to the Financial Insights project will be documented in this
 - Implemented CRUD API endpoints for properties
 - Implemented CRUD API endpoints for transactions
 - Created test scripts and manual tests for API validation
+- Added authentication middleware to protect API routes
+- Implemented security for property and transaction routes to ensure users can only access their own data
+- Added ownership verification for all property and transaction modification operations
 
 ## [0.1.0] - Planned Initial Release
 
@@ -39,9 +42,10 @@ All notable changes to the Financial Insights project will be documented in this
 ### Week 1: Backend & Data Models
 
 - [x] Set up PostgreSQL database
-- [ ] Create API endpoints for authentication
+- [x] Create API endpoints for authentication
 - [x] Create API endpoints for properties
 - [x] Create API endpoints for transactions
+- [x] Implement route security and data ownership validation
 - [ ] Implement file upload endpoints
 - [ ] Create data processing services
 - [ ] Set up frontend project structure
