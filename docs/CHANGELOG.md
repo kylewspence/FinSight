@@ -17,6 +17,11 @@ All notable changes to the Financial Insights project will be documented in this
 - Project scope documentation
 - Two-week implementation plan
 - Technical architecture documentation
+- Fixed PostgreSQL database schema with proper foreign key relationships
+- Added userId columns to properties, transactions, holdings, and insights tables
+- Implemented CRUD API endpoints for properties
+- Implemented CRUD API endpoints for transactions
+- Created test scripts and manual tests for API validation
 
 ## [0.1.0] - Planned Initial Release
 
@@ -33,8 +38,10 @@ All notable changes to the Financial Insights project will be documented in this
 
 ### Week 1: Backend & Data Models
 
-- [ ] Set up PostgreSQL database
+- [x] Set up PostgreSQL database
 - [ ] Create API endpoints for authentication
+- [x] Create API endpoints for properties
+- [x] Create API endpoints for transactions
 - [ ] Implement file upload endpoints
 - [ ] Create data processing services
 - [ ] Set up frontend project structure
