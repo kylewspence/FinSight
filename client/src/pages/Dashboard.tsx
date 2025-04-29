@@ -1,6 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import OverviewTab from '@/components/OverviewTab';
 import PropertiesTab from '@/components/PropertiesTab';
+import InvestmentsTab from '@/components/InvestmentsTab';
 
 export default function Dashboard() {
   return (
@@ -22,6 +23,10 @@ export default function Dashboard() {
 
         <TabsContent value="properties">
           <PropertiesTab />
+        </TabsContent>
+
+        <TabsContent value="investments">
+          <InvestmentsTab />
         </TabsContent>
 
         <TabsContent value="transactions">
