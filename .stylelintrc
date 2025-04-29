@@ -1,4 +1,8 @@
 {
   "extends": "./node_modules/@learningfuze/lfz-config/config/stylelintrc.json",
-  "rules": {"at-rule-no-unknown": null}
+  "rules": {
+    "import-notation": "string",
+    "at-rule-no-unknown": null,
+    "rule-empty-line-before": "always-multi-line"
+  }
 }
