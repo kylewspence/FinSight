@@ -154,12 +154,12 @@ A full-stack financial tracking application for monitoring investments, spending
 
 - **Shadcn UI**: For core UI components and dashboard layouts
 
-  - Will use dashboard blocks template for main layout
+  - Will use individual components
   - Provides consistent styling and interactive elements
 
-- **Tremor**: For data visualization and charts
-  - Will use insights template for transaction log visualization
-  - Provides interactive charts, KPI cards, and data tables
+- **Visualization**: For visualization / charts
+
+  - Use recharts and customize them to fit our purposes.
 
 ### Additional Libraries to Consider
 

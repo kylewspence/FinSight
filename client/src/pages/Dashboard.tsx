@@ -1,5 +1,37 @@
-import React from 'react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import OverviewTab from '@/components/OverviewTab';
+import PropertiesTab from '@/components/PropertiesTab';
 
 export default function Dashboard() {
-    return <h2 className="text-xl font-bold">Dashboard</h2>;
-  }
+  return (
+    <div className="flex flex-col gap-4">
+      {/* <h1 className="text-3xl font-bold">Financial Overview</h1> */}
+
+      <Tabs defaultValue="overview" className="w-full">
+        <TabsList>
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="properties">Properties</TabsTrigger>
+          <TabsTrigger value="investments">Investments</TabsTrigger>
+          <TabsTrigger value="spending">Spending</TabsTrigger>
+          <TabsTrigger value="transactions">Transactions</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="overview" className="w-full">
+          <OverviewTab />
+        </TabsContent>
+
+        <TabsContent value="properties">
+          <PropertiesTab />
+        </TabsContent>
+
+        <TabsContent value="transactions">
+          <p>Transaction data will be displayed here</p>
+        </TabsContent>
+
+        <TabsContent value="documents">
+          <p>Upload and view documents here</p>
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+}

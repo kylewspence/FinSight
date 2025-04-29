@@ -1,6 +1,8 @@
 // src/components/Layout.tsx
 import { Link, Outlet, useLocation } from 'react-router-dom';
 
+// use icons for login and signup
+
 export default function Layout() {
   const location = useLocation();
   const isAuthPage =
