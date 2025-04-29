@@ -1,3 +1,20 @@
 {
-  "extends": "./node_modules/@learningfuze/lfz-config/config/stylelintrc.json"
+  "extends": "./node_modules/@learningfuze/lfz-config/config/stylelintrc.json",
+  "rules": {
+    "import-notation": "string",
+    "at-rule-no-unknown": [true, {
+      "ignoreAtRules": [
+        "tailwind",
+        "apply",
+        "layer",
+        "theme",
+        "screen",
+        "variants",
+        "responsive",
+        "import",
+        "custom-variant"
+      ]
+    }],
+    "rule-empty-line-before": "always-multi-line"
+  }
 }
