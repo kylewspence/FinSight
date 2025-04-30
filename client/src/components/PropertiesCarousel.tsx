@@ -41,6 +41,82 @@ const properties = [
     image:
       'https://images.unsplash.com/photo-1604014238312-ccb88904fa7c?q=80&w=3270&auto=format&fit=crop',
   },
+  {
+    id: 'prop3',
+    address: '83 S 227th Ln',
+    formattedAddress: '83 S 227th Ln, Buckeye, AZ 85326',
+    propertyType: 'Single Family',
+    bedrooms: 4,
+    bathrooms: 2,
+    squareFootage: 1831,
+    yearBuilt: 2005,
+    lastSaleDate: '2017-06-16',
+    lastSalePrice: 178000,
+    estimatedValue: 245000, // Estimated based on previous sales data and appreciation
+    estimatedRangeLow: 235000,
+    estimatedRangeHigh: 255000,
+    monthlyRent: 1950, // Estimated market rent
+    image:
+      'https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?q=80&w=2070&auto=format&fit=crop',
+    location: {
+      latitude: 33.446612,
+      longitude: -112.540231,
+      city: 'Buckeye',
+      state: 'AZ',
+      county: 'Maricopa',
+      zipCode: '85326',
+    },
+    features: {
+      cooling: true,
+      coolingType: 'Refrigeration',
+      exteriorType: 'Stucco',
+      floorCount: 2,
+      garage: true,
+    },
+    lotSize: 4950,
+    taxes: {
+      annual: 2310, // Most recent year
+      assessedValue: 18530,
+    },
+  },
+  {
+    id: 'prop4',
+    address: '179 S 229th Dr',
+    formattedAddress: '179 S 229th Dr, Buckeye, AZ 85326',
+    propertyType: 'Single Family',
+    bedrooms: 3,
+    bathrooms: 2.5,
+    squareFootage: 1902,
+    yearBuilt: 2005,
+    lastSaleDate: '2017-09-13',
+    lastSalePrice: 177000,
+    estimatedValue: 255000, // Estimated based on previous sales data and appreciation
+    estimatedRangeLow: 243000,
+    estimatedRangeHigh: 267000,
+    monthlyRent: 2050, // Estimated market rent
+    image:
+      'https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?q=80&w=2070&auto=format&fit=crop',
+    location: {
+      latitude: 33.44571,
+      longitude: -112.543659,
+      city: 'Buckeye',
+      state: 'AZ',
+      county: 'Maricopa',
+      zipCode: '85326',
+    },
+    features: {
+      cooling: true,
+      coolingType: 'Refrigeration',
+      exteriorType: 'Wood',
+      floorCount: 2,
+      garage: true,
+    },
+    lotSize: 5291,
+    taxes: {
+      annual: 1468, // Most recent year
+      assessedValue: 16280,
+    },
+  },
 ];
 
 type PropertyType = {
