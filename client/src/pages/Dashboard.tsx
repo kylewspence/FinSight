@@ -13,8 +13,7 @@ export default function Dashboard() {
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="properties">Properties</TabsTrigger>
           <TabsTrigger value="investments">Investments</TabsTrigger>
-          <TabsTrigger value="spending">Spending</TabsTrigger>
-          <TabsTrigger value="transactions">Transactions</TabsTrigger>
+          <TabsTrigger value="insights">AI Insights</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="w-full">
@@ -29,12 +28,8 @@ export default function Dashboard() {
           <InvestmentsTab />
         </TabsContent>
 
-        <TabsContent value="transactions">
-          <p>Transaction data will be displayed here</p>
-        </TabsContent>
-
-        <TabsContent value="documents">
-          <p>Upload and view documents here</p>
+        <TabsContent value="AI Insights">
+          <p>AI Insights will be displayed here</p>
         </TabsContent>
       </Tabs>
     </div>

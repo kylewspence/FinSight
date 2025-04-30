@@ -39,23 +39,29 @@ All notable changes to the Financial Insights project will be documented in this
 
 ## Development Roadmap
 
-### Week 1: Backend & Data Models
+### Week 1: Backend & Data Models (Days 1-6 - Completed)
 
 - [x] Set up PostgreSQL database
 - [x] Create API endpoints for authentication
 - [x] Create API endpoints for properties
 - [x] Create API endpoints for transactions
 - [x] Implement route security and data ownership validation
+- [x] Set up frontend project structure
+- [x] Implement authentication UI
+- [x] Create basic layout with navigation
+- [x] Build dashboard layout with tabs
+- [x] Begin implementing data visualization components
+- [x] Implement initial investment portfolio components
+- [x] Create property management interface
+
+### Week 2: Frontend & Features (Days 7-14 - Remaining)
+
+- [ ] Complete dashboard UI implementation
+- [ ] Finish data visualization components
 - [ ] Implement file upload endpoints
-- [ ] Create data processing services
-- [ ] Set up frontend project structure
-- [ ] Implement authentication UI
-
-### Week 2: Frontend & Features
-
-- [ ] Build dashboard layout
-- [ ] Create visualization components
+- [ ] Create data processing services for CSV files
 - [ ] Implement OpenAI integration
 - [ ] Build financial insights components
 - [ ] Create responsive designs
+- [ ] Test all functionality end-to-end
 - [ ] Deploy application to AWS
