@@ -1,7 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import OverviewTab from '@/components/OverviewTab';
-import PropertiesTab from '@/components/PropertiesTab';
 import InvestmentsTab from '@/components/InvestmentsTab';
+import PropertiesCarousel from '@/components/PropertiesCarousel';
 
 export default function Dashboard() {
   return (
@@ -21,7 +21,7 @@ export default function Dashboard() {
         </TabsContent>
 
         <TabsContent value="properties">
-          <PropertiesTab />
+          <PropertiesCarousel />
         </TabsContent>
 
         <TabsContent value="investments">
