@@ -1,4 +1,3 @@
-
 import './App.css';
 import { Routes } from 'react-router-dom';
 import { Route } from 'react-router-dom';
@@ -9,28 +8,22 @@ import SignUpForm from './pages/SignUp';
 import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
 
-
-
 export default function App() {
   return (
     <Routes>
-      <Route path="/" element={<Layout />}>
-        <Route index element={<LandingPage />} />
+      {/* Landing page outside of Layout */}
+      <Route path="/" element={<LandingPage />} />
+
+      {/* All other pages use the Layout */}
+      <Route element={<Layout />}>
         <Route path="/dashboard" element={<Dashboard />} />
-        {"/* Add more routes here */"}
-  
-      <Route path="/login" element={<LoginForm />} />
-      <Route path="/signup" element={<SignUpForm />} />
+        <Route path="/login" element={<LoginForm />} />
+        <Route path="/signup" element={<SignUpForm />} />
+        {/* Add more routes here */}
       </Route>
     </Routes>
   );
 }
-
-
-
-
-
-
 
 // const [serverData, setServerData] = useState('');
 
