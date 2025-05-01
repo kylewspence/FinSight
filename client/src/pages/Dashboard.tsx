@@ -1,7 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import OverviewTab from '@/components/OverviewTab';
-import PropertiesTab from '@/components/PropertiesTab';
 import InvestmentsTab from '@/components/InvestmentsTab';
+import PropertiesCarousel from '@/components/PropertiesCarousel';
 
 export default function Dashboard() {
   return (
@@ -13,8 +13,7 @@ export default function Dashboard() {
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="properties">Properties</TabsTrigger>
           <TabsTrigger value="investments">Investments</TabsTrigger>
-          <TabsTrigger value="spending">Spending</TabsTrigger>
-          <TabsTrigger value="transactions">Transactions</TabsTrigger>
+          <TabsTrigger value="insights">AI Insights</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="w-full">
@@ -22,19 +21,15 @@ export default function Dashboard() {
         </TabsContent>
 
         <TabsContent value="properties">
-          <PropertiesTab />
+          <PropertiesCarousel />
         </TabsContent>
 
         <TabsContent value="investments">
           <InvestmentsTab />
         </TabsContent>
 
-        <TabsContent value="transactions">
-          <p>Transaction data will be displayed here</p>
-        </TabsContent>
-
-        <TabsContent value="documents">
-          <p>Upload and view documents here</p>
+        <TabsContent value="AI Insights">
+          <p>AI Insights will be displayed here</p>
         </TabsContent>
       </Tabs>
     </div>

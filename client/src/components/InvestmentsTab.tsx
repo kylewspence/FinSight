@@ -18,6 +18,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from 'recharts';
+
 
 // Mock data
 const portfolioData = {
@@ -141,6 +152,17 @@ const holdingsData = [
 // ];
 
 export default function InvestmentsTab() {
+
+  const startPortfolio = performanceData[0].portfolio;
+  const endPortfolio = performanceData[performanceData.length - 1].portfolio;
+  const portfolioChange =
+    ((endPortfolio - startPortfolio) / startPortfolio) * 100;
+
+  const startSP500 = performanceData[0].sp500;
+  const endSP500 = performanceData[performanceData.length - 1].sp500;
+  const sp500Change = ((endSP500 - startSP500) / startSP500) * 100;
+
+
   const totalGrowth = portfolioData.totalValue - portfolioData.previousValue;
   return (
     <>
@@ -257,6 +279,152 @@ export default function InvestmentsTab() {
 
         {/* // PERFORMANCE CHART */}
 
+        <div className="mt-8">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-xl font-bold">Performance Over Time</h3>
+            <div className="flex gap-2">
+              <button className="px-2 py-1 text-xs text-muted-foreground">
+                1M
+              </button>
+              <button className="px-2 py-1 text-xs text-muted-foreground">
+                3M
+              </button>
+              <button className="px-2 py-1 text-xs text-muted-foreground">
+                6M
+              </button>
+              <button className="px-2 py-1 text-xs bg-primary text-primary-foreground rounded-md">
+                1Y
+              </button>
+            </div>
+          </div>
+
+          <Card>
+            <CardContent className="p-6 pb-0">
+              <div className="h-[300px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart
+                    data={performanceData}
+                    margin={{
+                      top: 5,
+                      right: 30,
+                      left: 20,
+                      bottom: 5,
+                    }}>
+                    <CartesianGrid strokeDasharray="3 3" />{' '}
+                    {/* // GRID LINES */}
+                    <XAxis
+                      dataKey="date"
+                      tick={{ fontSize: 12 }}
+                      tickFormatter={(tick) => {
+                        const date = new Date(tick);
+                        return date.toLocaleString('default', {
+                          month: 'short',
+                        });
+                      }}
+                    />{' '}
+                    {/* // DATE LABELS */}
+                    <YAxis
+                      tick={{ fontSize: 12 }}
+                      tickFormatter={(tick) => formatCurrency(tick)}
+                      width={80}
+                      domain={[startPortfolio - 10000, 'auto']}
+                    />
+                    {/* // $ LABELS */}
+                    <Tooltip
+                      formatter={(value: number, name: string) => {
+                        const startValue =
+                          name === 'Portfolio' ? startPortfolio : startSP500;
+                        const percentChange = (
+                          ((value - startValue) / startValue) *
+                          100
+                        ).toFixed(2);
+
+                        return [
+                          `${formatCurrency(value)} (${percentChange}%)`,
+                          name === 'portfolio' ? 'Portfolio' : 'S&P 500',
+                        ];
+                      }}
+                      labelFormatter={(label) => {
+                        const date = new Date(label);
+                        return date.toLocaleDateString('default', {
+                          month: 'long',
+                          year: 'numeric',
+                        });
+                      }}
+                    />{' '}
+                    {/* // DATA POINTS */}
+                    {/* recharts passes data as "payload" */}
+                    <Legend
+                      content={({ payload }) => (
+                        <div className="flex justify-center gap-10 mt-2">
+                          {payload?.map((entry, index) => (
+                            <div
+                              key={index}
+                              className="flex items-center gap-4">
+                              {/* Color indicator */}
+                              <span
+                                className="inline-block w-3 h-3 rounded-full"
+                                style={{ backgroundColor: entry.color }}
+                              />
+
+                              {/* Label and values */}
+                              <div>
+                                <div className="flex items-center gap-2">
+                                  <span className="font-medium">
+                                    {entry.value === 'portfolio'
+                                      ? 'Your Portfolio'
+                                      : 'S&P 500'}
+                                  </span>
+                                  <span className="text-sm font-medium">
+                                    {entry.value === 'portfolio'
+                                      ? formatCurrency(endPortfolio)
+                                      : formatCurrency(endSP500)}
+                                  </span>
+                                  <span
+                                    className={
+                                      entry.value === 'portfolio'
+                                        ? portfolioChange >= 0
+                                          ? 'text-green-500'
+                                          : 'text-red-500'
+                                        : sp500Change >= 0
+                                        ? 'text-green-500'
+                                        : 'text-red-500'
+                                    }>
+                                    {entry.value === 'portfolio'
+                                      ? (portfolioChange >= 0 ? '+' : '') +
+                                        portfolioChange.toFixed(2) +
+                                        '%'
+                                      : (sp500Change >= 0 ? '+' : '') +
+                                        sp500Change.toFixed(2) +
+                                        '%'}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    />
+                    {/* // SUMMARY UNDER CHART */}
+                    <Line
+                      type="monotone"
+                      dataKey="portfolio"
+                      stroke="#8884d8"
+                    />{' '}
+                    {/* // PORTFOLIO LINE */}
+                    <Line
+                      type="monotone"
+                      dataKey="sp500"
+                      stroke="#82ca9d"
+                    />{' '}
+                    {/* // SP500 LINE */}
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
         {/* // INVESTMENT ACCOUNTS */}
         <div className="mt-8">
           <h3 className="text-xl font-bold mb-4">Investment Accounts</h3>
@@ -323,6 +491,7 @@ export default function InvestmentsTab() {
             </div>
           </div>
         </div>
+
         {/* TABLE  */}
         <div className="mt-8">
           <h3 className="text-xl font-bold mb-4">Holdings Breakdown</h3>

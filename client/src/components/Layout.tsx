@@ -1,7 +1,7 @@
 // src/components/Layout.tsx
 import { Link, Outlet, useLocation } from 'react-router-dom';
 
-// use icons for login and signup
+// use icons for login and sign up
 
 export default function Layout() {
   const location = useLocation();
@@ -14,22 +14,18 @@ export default function Layout() {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             <Link to="/" className="font-bold text-xl">
-              FinSight
+              <img
+                src="/FinSight.png"
+                alt="FinSight"
+                className="h-20 w-auto mb-1"
+              />
             </Link>
 
             <div className="flex space-x-4">
               <Link
                 to="/dashboard"
                 className="px-3 py-2 rounded hover:bg-gray-700">
-                Dashboard
-              </Link>
-              <Link to="/login" className="px-3 py-2 rounded hover:bg-gray-700">
-                Login
-              </Link>
-              <Link
-                to="/signup"
-                className="px-3 py-2 rounded hover:bg-gray-700">
-                Sign Up
+                Dashboard - temp
               </Link>
             </div>
           </div>
