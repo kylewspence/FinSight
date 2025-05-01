@@ -1,9 +1,9 @@
 import { ReactNode, createContext, useState } from 'react';
-import { removeAuth, saveAuth } from '../lib';
+import { removeAuth, saveAuth } from '../lib/data';
 
 export type User = {
   userId: number;
-  username: string;
+  userName: string;
 };
 
 export type UserContextValues = {
