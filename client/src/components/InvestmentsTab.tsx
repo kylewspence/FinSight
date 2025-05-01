@@ -29,7 +29,6 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 
-
 // Mock data
 const portfolioData = {
   totalValue: 258750,
@@ -136,23 +135,22 @@ const holdingsData = [
   },
 ];
 
-// const performanceData = [
-//   { date: '2023-01', portfolio: 210000, sp500: 210000 },
-//   { date: '2023-02', portfolio: 215000, sp500: 216300 },
-//   { date: '2023-03', portfolio: 220000, sp500: 214200 },
-//   { date: '2023-04', portfolio: 218000, sp500: 220500 },
-//   { date: '2023-05', portfolio: 225000, sp500: 226800 },
-//   { date: '2023-06', portfolio: 230000, sp500: 231000 },
-//   { date: '2023-07', portfolio: 235000, sp500: 235200 },
-//   { date: '2023-08', portfolio: 238000, sp500: 228900 },
-//   { date: '2023-09', portfolio: 240000, sp500: 233100 },
-//   { date: '2023-10', portfolio: 245000, sp500: 239400 },
-//   { date: '2023-11', portfolio: 250000, sp500: 243600 },
-//   { date: '2023-12', portfolio: 258750, sp500: 252000 },
-// ];
+const performanceData = [
+  { date: '2023-01', portfolio: 210000, sp500: 210000 },
+  { date: '2023-02', portfolio: 215000, sp500: 216300 },
+  { date: '2023-03', portfolio: 220000, sp500: 214200 },
+  { date: '2023-04', portfolio: 218000, sp500: 220500 },
+  { date: '2023-05', portfolio: 225000, sp500: 226800 },
+  { date: '2023-06', portfolio: 230000, sp500: 231000 },
+  { date: '2023-07', portfolio: 235000, sp500: 235200 },
+  { date: '2023-08', portfolio: 238000, sp500: 228900 },
+  { date: '2023-09', portfolio: 240000, sp500: 233100 },
+  { date: '2023-10', portfolio: 245000, sp500: 239400 },
+  { date: '2023-11', portfolio: 250000, sp500: 243600 },
+  { date: '2023-12', portfolio: 258750, sp500: 252000 },
+];
 
 export default function InvestmentsTab() {
-
   const startPortfolio = performanceData[0].portfolio;
   const endPortfolio = performanceData[performanceData.length - 1].portfolio;
   const portfolioChange =
@@ -161,7 +159,6 @@ export default function InvestmentsTab() {
   const startSP500 = performanceData[0].sp500;
   const endSP500 = performanceData[performanceData.length - 1].sp500;
   const sp500Change = ((endSP500 - startSP500) / startSP500) * 100;
-
 
   const totalGrowth = portfolioData.totalValue - portfolioData.previousValue;
   return (
