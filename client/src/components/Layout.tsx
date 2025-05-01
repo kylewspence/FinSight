@@ -1,12 +1,21 @@
 // src/components/Layout.tsx
-import { Link, Outlet, useLocation } from 'react-router-dom';
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { useUser } from './useUser';
+import { Button } from './ui/button';
 
 // use icons for login and sign up
 
 export default function Layout() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, handleSignOut } = useUser();
   const isAuthPage =
     location.pathname === '/login' || location.pathname === '/signup';
+
+  const handleLogout = () => {
+    handleSignOut();
+    navigate('/login');
+  };
   return (
     <div className="min-h-screen flex flex-col">
       {/* Navigation Bar */}
@@ -27,6 +36,10 @@ export default function Layout() {
                 className="px-3 py-2 rounded hover:bg-gray-700">
                 Dashboard - temp
               </Link>
+              <div className="flex items-center gap-2">
+                <span>Welcome, {user?.username}</span>
+                <Button onClick={handleLogout}>Logout</Button>
+              </div>
             </div>
           </div>
         </div>
