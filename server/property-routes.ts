@@ -81,7 +81,7 @@ router.get('/property/:propertyId', async (req, res, next) => {
 });
 
 // POST a new property
-router.post('/', async (req, res, next) => {
+router.post('/', authMiddleware, async (req, res, next) => {
   try {
     console.log('POST /properties requested');
 
@@ -95,28 +95,17 @@ router.post('/', async (req, res, next) => {
 
     const {
       address,
-      estValue,
-      range,
-      type,
-      beds,
-      bath,
-      sqft,
-      built,
-      lastSale,
+      estimatedValue, // estValue in DB
+      estimatedRangeLow, // range in DB (we'll use the low range)
+      propertyType, // type in DB
+      bedrooms, // beds in DB
+      bathrooms, // bath in DB
+      squareFootage, // sqft in DB
+      yearBuilt, // built in DB
+      lastSaleDate, // lastSale in DB
     } = req.body;
-    if (
-      !address ||
-      !estValue ||
-      !range ||
-      !type ||
-      !beds ||
-      !bath ||
-      !sqft ||
-      !built ||
-      !lastSale
-    ) {
-      console.warn('Missing required fields');
-      throw new ClientError(400, 'Missing required fields');
+    if (!address) {
+      throw new ClientError(400, 'Address is required');
     }
 
     const sql = `
@@ -138,14 +127,14 @@ router.post('/', async (req, res, next) => {
     const params = [
       userId,
       address,
-      estValue,
-      range,
-      type,
-      beds,
-      bath,
-      sqft,
-      built,
-      lastSale,
+      Math.round(estimatedValue) || 0,
+      Math.round(estimatedRangeLow) || 0,
+      propertyType || 'Single Family',
+      bedrooms?.toString() || '0',
+      bathrooms?.toString() || '0',
+      Math.round(squareFootage) || 0,
+      Math.round(yearBuilt) || 0,
+      lastSaleDate || '',
     ];
     console.log('Params:', params);
 

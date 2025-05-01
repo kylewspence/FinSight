@@ -19,6 +19,7 @@ interface CarouselProps {
 type Card = {
   src: string;
   title: string;
+  subtitle: string;
   category: string;
   content: React.ReactNode;
 };
@@ -236,6 +237,11 @@ export const Card = ({
             layoutId={layout ? `title-${card.title}` : undefined}
             className="mt-2 max-w-xs text-left font-sans text-xl font-semibold [text-wrap:balance] text-white md:text-3xl">
             {card.title}
+          </motion.p>
+          <motion.p
+            layoutId={layout ? `title-${card.title}` : undefined}
+            className="mt-2 max-w-xs text-left font-sans text-xl font-semibold [text-wrap:balance] text-white md:text-3xl">
+            {card.subtitle}
           </motion.p>
         </div>
         <img

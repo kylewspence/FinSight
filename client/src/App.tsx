@@ -2,7 +2,6 @@ import './App.css';
 import { Routes } from 'react-router-dom';
 import { Route } from 'react-router-dom';
 import LandingPage from './pages/LandingPage';
-
 import LoginForm from './pages/LoginPage';
 import SignUpForm from './pages/SignUp';
 import Layout from './components/Layout';
