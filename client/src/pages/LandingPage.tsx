@@ -1,3 +1,4 @@
+
 import { motion } from 'motion/react';
 import { AuroraBackground } from '../components/ui/aurora-background';
 import { Button } from '../components/ui/button';
@@ -33,4 +34,5 @@ export default function LandingPage() {
       </motion.div>
     </AuroraBackground>
   );
+
 }
