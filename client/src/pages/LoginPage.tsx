@@ -32,6 +32,7 @@ export default function LoginForm({
       setIsLoading(true);
       const formData = new FormData(event.currentTarget);
       const userData = Object.fromEntries(formData);
+
       const req = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -41,10 +42,11 @@ export default function LoginForm({
       if (!res.ok) {
         throw new Error(`fetch Error ${res.status}`);
       }
+
       const { user, token } = (await res.json()) as AuthData;
+
       handleSignIn(user, token);
-      console.log('Signed In', user);
-      console.log('Received token:', token);
+
       navigate('/dashboard');
     } catch (err) {
       alert(`Error signing in: ${err}`);

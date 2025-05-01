@@ -37,7 +37,7 @@ export default function Layout() {
                 Dashboard - temp
               </Link>
               <div className="flex items-center gap-2">
-                <span>Welcome, {user?.username}</span>
+                <span>Welcome, {user?.userName}</span>
                 <Button onClick={handleLogout}>Logout</Button>
               </div>
             </div>
