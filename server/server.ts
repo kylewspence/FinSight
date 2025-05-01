@@ -2,10 +2,12 @@
 import 'dotenv/config';
 import express from 'express';
 import pg from 'pg';
-import { ClientError, errorMiddleware, authMiddleware } from './lib/index.js';
-import propertyRoutes from './property-routes.js';
-import transactionRoutes from './transaction-routes.js';
-import authRoutes from './auth-routes.js';
+import { ClientError, errorMiddleware, authMiddleware } from './lib/index';
+import propertyRoutes from './property-routes';
+import transactionRoutes from './transaction-routes';
+import authRoutes from './auth-routes';
+import propertyRentcastRoute from './routes/rentcast/property';
+import valueRentcastRoute from './routes/rentcast/value';
 
 const db = new pg.Pool({
   connectionString: process.env.DATABASE_URL,
@@ -38,16 +40,20 @@ app.use('/api/transactions', transactionRoutes);
 // Auth Routes
 app.use('/api/auth', authRoutes);
 
+// RentCast Routes
+app.use('/api/rentcast/property', propertyRentcastRoute);
+app.use('/api/rentcast/value', valueRentcastRoute);
+app.get('/api/test', (req, res) => {
+  console.log('Test endpoint hit!');
+  res.json({ message: 'API test endpoint working' });
+});
+
 /*
  * Handles paths that aren't handled by any other route handler.
  * It responds with `index.html` to support page refreshes with React Router.
  * This must be the _last_ route, just before errorMiddleware.
  */
 app.get('*', (req, res) => res.sendFile(`${reactStaticDir}/index.html`));
-app.get('/api/test', (req, res) => {
-  console.log('Test endpoint hit!');
-  res.json({ message: 'API test endpoint working' });
-});
 
 app.use(errorMiddleware);
 
