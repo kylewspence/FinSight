@@ -3,7 +3,7 @@ import { removeAuth, saveAuth } from '../lib';
 
 export type User = {
   userId: number;
-  username: string;
+  userName: string;
 };
 
 export type UserContextValues = {

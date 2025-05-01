@@ -11,13 +11,14 @@ interface DbProperty {
   propertyId: number;
   address: string;
   type: string;
-  beds: string;
-  bath: string;
-  sqft: number;
-  built: number;
+  beds: number;
+  bath: number;
+  squareFootage: number;
+  yearBuilt: number;
   lastSale: string;
-  estValue: number;
-  range: number;
+  estimatedValue: number;
+  estimatedRangeLow: number;
+  estimatedRangeHigh: number;
 }
 // Sample property data - this could come from props or context
 const sampleProperties = [
@@ -168,15 +169,16 @@ export default function PropertiesTab() {
             address: prop.address,
             formattedAddress: prop.address,
             propertyType: prop.type,
-            bedrooms: parseInt(prop.beds) || 0,
-            bathrooms: parseFloat(prop.bath) || 0,
-            squareFootage: prop.sqft,
-            yearBuilt: prop.built,
+            bedrooms: prop.beds,
+            bathrooms: prop.bath,
+            squareFootage: prop.squareFootage,
+            yearBuilt: prop.yearBuilt,
             lastSaleDate: prop.lastSale,
             lastSalePrice: 0, // Not in your schema
-            estimatedValue: prop.estValue,
-            estimatedRangeLow: prop.range,
-            estimatedRangeHigh: prop.estValue + prop.estValue * 0.05, // Estimate
+            estimatedValue: prop.estimatedValue,
+            estimatedRangeLow: prop.estimatedRangeLow,
+            estimatedRangeHigh:
+              prop.estimatedValue + prop.estimatedValue * 0.05, // Estimate
             monthlyRent: 0, // Not in your schema
             image:
               'https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?q=80&w=2070&auto=format&fit=crop',

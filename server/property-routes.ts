@@ -82,6 +82,8 @@ router.get('/property/:propertyId', async (req, res, next) => {
 
 // POST a new property
 router.post('/', authMiddleware, async (req, res, next) => {
+  console.log('Received property data:', req.body);
+  console.log('User from token:', req.user);
   try {
     console.log('POST /properties requested');
 
@@ -97,12 +99,12 @@ router.post('/', authMiddleware, async (req, res, next) => {
       address,
       estimatedValue, // estValue in DB
       estimatedRangeLow, // range in DB (we'll use the low range)
-      propertyType, // type in DB
-      bedrooms, // beds in DB
-      bathrooms, // bath in DB
+      type, // type in DB
+      beds, // beds in DB
+      bath, // bath in DB
       squareFootage, // sqft in DB
       yearBuilt, // built in DB
-      lastSaleDate, // lastSale in DB
+      lastSale, // lastSale in DB
     } = req.body;
     if (!address) {
       throw new ClientError(400, 'Address is required');
@@ -112,13 +114,14 @@ router.post('/', authMiddleware, async (req, res, next) => {
         INSERT into "properties" 
         ("userId",  
         "address",
-        "estValue",
-        "range",
+        "estimatedValue",
+        "estimatedRangeLow",
+        "estimatedRangeHigh",
         "type",
         "beds",
         "bath",
-        "sqft",
-        "built",
+        "squareFootage",
+        "yearBuilt",
         "lastSale")
         values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
         RETURNING *;
@@ -129,12 +132,12 @@ router.post('/', authMiddleware, async (req, res, next) => {
       address,
       Math.round(estimatedValue) || 0,
       Math.round(estimatedRangeLow) || 0,
-      propertyType || 'Single Family',
-      bedrooms?.toString() || '0',
-      bathrooms?.toString() || '0',
+      type || 'Single Family',
+      parseInt(beds) || 0,
+      parseFloat(bath) || 0,
       Math.round(squareFootage) || 0,
       Math.round(yearBuilt) || 0,
-      lastSaleDate || '',
+      lastSale || '',
     ];
     console.log('Params:', params);
 

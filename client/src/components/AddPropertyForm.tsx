@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { getPropertyDetails } from '@/lib/rentcast-service';
+import { readToken } from '@/lib/data';
 
 interface AddPropertyFormProps {
   onPropertyAdded: (property: any) => void;
@@ -34,9 +35,28 @@ export function AddPropertyForm({
       // Call our rentcast service to get property details
       const propertyData = await getPropertyDetails(address);
       console.log('Property data received:', propertyData);
+      console.log(
+        'Property data to save:',
+        JSON.stringify(propertyData, null, 2)
+      );
+
+      const dataToSend = {
+        address: propertyData.formattedAddress,
+        estimatedValue: propertyData.estimatedValue || propertyData.price || 0,
+        estimatedRangeLow:
+          propertyData.estimatedRangeLow || propertyData.priceRangeLow || 0,
+        type: propertyData.propertyType || 'Single Family',
+        beds: propertyData.bedrooms?.toString() || '0',
+        bath: propertyData.bathrooms?.toString() || '0',
+        squareFootage: propertyData.squareFootage || 0,
+        yearBuilt: propertyData.yearBuilt || 0,
+        lastSale: propertyData.lastSaleDate || '',
+      };
+
+      console.log('Formatted data to save:', dataToSend);
 
       // Save to database
-      const token = localStorage.getItem('token');
+      const token = readToken();
       if (!token) {
         throw new Error('You must be logged in to save properties');
       }
@@ -47,7 +67,7 @@ export function AddPropertyForm({
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(propertyData),
+        body: JSON.stringify(dataToSend),
       });
 
       if (!response.ok) {
@@ -63,16 +83,16 @@ export function AddPropertyForm({
         address: savedProperty.address,
         formattedAddress: savedProperty.address,
         propertyType: savedProperty.type,
-        bedrooms: parseInt(savedProperty.beds) || 0,
-        bathrooms: parseFloat(savedProperty.bath) || 0,
-        squareFootage: savedProperty.sqft,
-        yearBuilt: savedProperty.built,
+        bedrooms: savedProperty.beds,
+        bathrooms: savedProperty.bath,
+        squareFootage: savedProperty.squareFootage,
+        yearBuilt: savedProperty.yearBuilt,
         lastSaleDate: savedProperty.lastSale,
         lastSalePrice: 0, // Not in your schema
-        estimatedValue: savedProperty.estValue,
-        estimatedRangeLow: savedProperty.range,
+        estimatedValue: savedProperty.estimatedValue,
+        estimatedRangeLow: savedProperty.estimatedRangeLow,
         estimatedRangeHigh:
-          savedProperty.estValue + savedProperty.estValue * 0.05, // Estimate
+          savedProperty.estimatedValue + savedProperty.estimatedValue * 0.05, // Estimate
         monthlyRent: 0, // Not in your schema
       };
       // Pass the property to the parent component
