@@ -17,15 +17,17 @@ CREATE TABLE "properties" (
   "propertyId" serial PRIMARY KEY,
   "userId" integer REFERENCES "users" ("userId"),
   "address" text,
-  "estValue" integer,
-  "range" integer,
+  "estimatedValue" integer,
+  "estimatedRangeLow" integer,
+  "estimatedRangeHigh" integer,
   "type" text,
-  "beds" text,
-  "bath" text,
-  "sqft" integer,
-  "built" integer,
-  "lastSale" text
+  "beds" integer,
+  "bath" numeric,
+  "squareFootage" integer,
+  "lastSale" text,
+  "yearBuilt" integer
 );
+
 
 CREATE TABLE "transactions" (
   "transactionId" serial PRIMARY KEY,
