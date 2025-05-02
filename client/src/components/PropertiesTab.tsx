@@ -101,8 +101,6 @@ export default function PropertiesTab() {
     <Card key={index} card={card} index={index} />
   ));
 
-  console.log('Card data:', cardsData);
-
   return (
     <div className="w-full h-full pb-10">
       <div className="flex justify-between items-center mb-4">

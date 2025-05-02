@@ -21,8 +21,6 @@ export function getStreetViewImage(address: string): string {
   const size = '600x400'; // Width x Height
   const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
-  console.log('API Key available:', !!apiKey); // Check if API key exists
-
   if (!apiKey) {
     console.warn('No Google Maps API key found in environment variables');
     return 'https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?q=80&w=2070&auto=format&fit=crop';
