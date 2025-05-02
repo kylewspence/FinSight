@@ -1,6 +1,6 @@
 // client/src/types/PropertyTypes.ts
 export interface PropertyType {
-  id: string;
+  id: number;
   address: string;
   formattedAddress: string;
   propertyType: string;

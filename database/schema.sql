@@ -25,6 +25,7 @@ CREATE TABLE "properties" (
   "bath" numeric,
   "squareFootage" integer,
   "lastSale" text,
+  "lastSalePrice" integer,
   "yearBuilt" integer
 );
 
