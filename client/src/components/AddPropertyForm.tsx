@@ -4,9 +4,10 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { getPropertyDetails } from '@/lib/rentcast-service';
 import { readToken } from '@/lib/data';
+import { PropertyType } from '@/types/PropertyTypes';
 
 interface AddPropertyFormProps {
-  onPropertyAdded: (property: any) => void;
+  onPropertyAdded: (property: PropertyType) => void;
   onCancel: () => void;
 }
 
@@ -18,7 +19,7 @@ export function AddPropertyForm({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
     if (!address.trim()) {
@@ -30,74 +31,13 @@ export function AddPropertyForm({
     setError(null);
 
     try {
-      console.log('Fetching property details for:', address);
+      // Use the new function for a clean data flow
+      const newProperty = await savePropertyToDatabase(address);
 
-      // Call our rentcast service to get property details
-      const propertyData = await getPropertyDetails(address);
-      console.log('Property data received:', propertyData);
-      console.log(
-        'Property data to save:',
-        JSON.stringify(propertyData, null, 2)
-      );
-
-      const dataToSend = {
-        address: propertyData.formattedAddress,
-        estimatedValue: propertyData.estimatedValue || propertyData.price || 0,
-        estimatedRangeLow:
-          propertyData.estimatedRangeLow || propertyData.priceRangeLow || 0,
-        type: propertyData.propertyType || 'Single Family',
-        beds: propertyData.bedrooms?.toString() || '0',
-        bath: propertyData.bathrooms?.toString() || '0',
-        squareFootage: propertyData.squareFootage || 0,
-        yearBuilt: propertyData.yearBuilt || 0,
-        lastSale: propertyData.lastSaleDate || '',
-        lastSalePrice: propertyData.lastSalePrice || 0,
-      };
-
-      console.log('Formatted data to save:', dataToSend);
-
-      // Save to database
-      const token = readToken();
-      if (!token) {
-        throw new Error('You must be logged in to save properties');
-      }
-
-      const response = await fetch('/api/properties', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(dataToSend),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Failed to save property');
-      }
-
-      const savedProperty = await response.json();
-
-      // Transform the database response to match PropertyType
-      const newProperty = {
-        id: `prop${savedProperty.propertyId}`,
-        address: savedProperty.address,
-        formattedAddress: savedProperty.address,
-        propertyType: savedProperty.type,
-        bedrooms: savedProperty.beds,
-        bathrooms: savedProperty.bath,
-        squareFootage: savedProperty.squareFootage,
-        yearBuilt: savedProperty.yearBuilt,
-        lastSaleDate: savedProperty.lastSale,
-        lastSalePrice: savedProperty.lastSalePrice,
-        estimatedValue: savedProperty.estimatedValue,
-        estimatedRangeLow: savedProperty.estimatedRangeLow,
-        monthlyRent: 0,
-      };
-      // Pass the property to the parent component
+      // Pass the complete property to parent
       onPropertyAdded(newProperty);
 
-      // Clear the form
+      // Clear form
       setAddress('');
     } catch (err) {
       console.error('Error saving property:', err);
@@ -105,7 +45,70 @@ export function AddPropertyForm({
     } finally {
       setLoading(false);
     }
-  };
+  }
+
+  async function savePropertyToDatabase(
+    address: string
+  ): Promise<PropertyType> {
+    // Call our rentcast service to get property details
+    const propertyData = await getPropertyDetails(address);
+
+    //Format data for database
+    const dataToSend = {
+      address: propertyData.formattedAddress,
+      estimatedValue: propertyData.estimatedValue || propertyData.price || 0,
+      estimatedRangeLow:
+        propertyData.estimatedRangeLow || propertyData.priceRangeLow || 0,
+      type: propertyData.propertyType || 'Single Family',
+      beds: propertyData.bedrooms?.toString() || '0',
+      bath: propertyData.bathrooms?.toString() || '0',
+      squareFootage: propertyData.squareFootage || 0,
+      yearBuilt: propertyData.yearBuilt || 0,
+      lastSale: propertyData.lastSaleDate || '',
+      lastSalePrice: propertyData.lastSalePrice || 0,
+    };
+
+    // Save to database
+    const token = readToken();
+    if (!token) {
+      throw new Error('You must be logged in to save properties');
+    }
+
+    const response = await fetch('/api/properties', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(dataToSend),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Failed to save property');
+    }
+
+    //Get saved property with database ID and image URL
+    const savedProperty = await response.json();
+
+    // Transform the database response to match PropertyType
+    return {
+      id: savedProperty.id,
+      address: savedProperty.address,
+      formattedAddress: savedProperty.address,
+      propertyType: savedProperty.type,
+      bedrooms: savedProperty.beds,
+      bathrooms: savedProperty.bath,
+      squareFootage: savedProperty.squareFootage,
+      yearBuilt: savedProperty.yearBuilt,
+      lastSaleDate: savedProperty.lastSale,
+      lastSalePrice: savedProperty.lastSalePrice,
+      estimatedValue: savedProperty.estimatedValue,
+      estimatedRangeLow: savedProperty.estimatedRangeLow,
+      monthlyRent: 0,
+      image: savedProperty.imageUrl,
+    };
+  }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">

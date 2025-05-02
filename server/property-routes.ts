@@ -1,7 +1,7 @@
 import { ClientError, authMiddleware } from './lib/index.js';
 import express from 'express';
 import pg from 'pg';
-
+import { normalizeAddress } from '../client/src/lib/utils.js';
 const db = new pg.Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
@@ -111,9 +111,11 @@ router.post('/', authMiddleware, async (req, res, next) => {
       throw new ClientError(400, 'Address is required');
     }
 
+    const normalizedAddress = normalizeAddress(address);
+
     const apiKey = process.env.GOOGLE_MAPS_API_KEY;
     const imageUrl = `https://maps.googleapis.com/maps/api/streetview?size=600x400&location=${encodeURIComponent(
-      address
+      normalizedAddress
     )}&key=${apiKey}`;
 
     const sql = `
@@ -136,7 +138,7 @@ router.post('/', authMiddleware, async (req, res, next) => {
 
     const params = [
       userId,
-      address,
+      normalizedAddress,
       Math.round(estimatedValue) || 0,
       Math.round(estimatedRangeLow) || 0,
       type || 'Single Family',
@@ -206,6 +208,8 @@ router.put('/:propertyId', async (req, res, next) => {
       lastSalePrice,
     } = req.body;
 
+    const normalizedAddress = normalizeAddress(address);
+
     const sql = `
         UPDATE "properties"
         SET "address" = $1,
@@ -223,7 +227,7 @@ router.put('/:propertyId', async (req, res, next) => {
         `;
 
     const params = [
-      address || null,
+      normalizedAddress || null,
       estimatedValue !== undefined ? Math.round(estimatedValue) : null,
       estimatedRangeLow !== undefined ? Math.round(estimatedRangeLow) : null,
       type || null,

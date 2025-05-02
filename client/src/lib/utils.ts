@@ -28,3 +28,14 @@ export function getStreetViewImage(address: string): string {
 
   return `https://maps.googleapis.com/maps/api/streetview?size=${size}&location=${formattedAddress}&key=${apiKey}`;
 }
+
+export function normalizeAddress(address: string): string {
+  const parts = address.split(',').map((part) => part.trim());
+  const normalized = parts.map((part) =>
+    part
+      .split(' ')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ')
+  );
+  return normalized.join(', ');
+}

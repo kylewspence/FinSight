@@ -28,6 +28,7 @@ export async function getPropertyDetails(
   try {
     const propertyData = await fetchPropertyDetails(address);
 
+    //Value data is the data needed for the RentCast valuation API
     let valueData = null;
     try {
       valueData = await fetchPropertyValue(address, {
@@ -39,7 +40,7 @@ export async function getPropertyDetails(
     } catch (error) {
       console.error('Error fetching property value:', error);
     }
-
+    // Returning the normal property data and the value data - if it exists.
     return {
       ...propertyData,
       ...(valueData

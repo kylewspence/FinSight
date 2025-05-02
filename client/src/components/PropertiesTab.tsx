@@ -53,7 +53,7 @@ export default function PropertiesTab() {
         // Convert database properties to PropertyType format
         const formattedProperties: PropertyType[] = dbProperties.map(
           (prop: DbProperty) => ({
-            id: `prop${prop.propertyId}`,
+            id: prop.propertyId,
             address: prop.address,
             formattedAddress: prop.address,
             propertyType: prop.type,
@@ -83,12 +83,26 @@ export default function PropertiesTab() {
 
   // Handle adding a new property
   const handlePropertyAdded = (newProperty: PropertyType) => {
+    if (!newProperty.image && newProperty.address) {
+      // If the property doesn't have an image yet but has an address
+      const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+      newProperty.image = `https://maps.googleapis.com/maps/api/streetview?size=600x400&location=${encodeURIComponent(
+        newProperty.address
+      )}&key=${apiKey}`;
+    }
+
     setProperties([...properties, newProperty]);
     setShowAddForm(false);
+
+    // Force a re-render
+    setTimeout(() => {
+      window.scrollTo({ top: window.scrollY + 1, behavior: 'smooth' });
+    }, 100);
   };
 
   // Transform properties into card data
   const cardsData = properties.map((property) => ({
+    id: property.id,
     category: property.propertyType,
     title: property.address,
     subtitle: `${property.bedrooms} bed, ${property.bathrooms} bath`,
@@ -98,7 +112,7 @@ export default function PropertiesTab() {
 
   // Create carousel cards
   const cards = cardsData.map((card, index) => (
-    <Card key={index} card={card} index={index} />
+    <Card key={card.id} card={card} index={index} />
   ));
 
   return (
