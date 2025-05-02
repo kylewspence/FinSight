@@ -51,6 +51,7 @@ export function AddPropertyForm({
         squareFootage: propertyData.squareFootage || 0,
         yearBuilt: propertyData.yearBuilt || 0,
         lastSale: propertyData.lastSaleDate || '',
+        lastSalePrice: propertyData.lastSalePrice || 0,
       };
 
       console.log('Formatted data to save:', dataToSend);
@@ -88,12 +89,10 @@ export function AddPropertyForm({
         squareFootage: savedProperty.squareFootage,
         yearBuilt: savedProperty.yearBuilt,
         lastSaleDate: savedProperty.lastSale,
-        lastSalePrice: 0, // Not in your schema
+        lastSalePrice: savedProperty.lastSalePrice,
         estimatedValue: savedProperty.estimatedValue,
         estimatedRangeLow: savedProperty.estimatedRangeLow,
-        estimatedRangeHigh:
-          savedProperty.estimatedValue + savedProperty.estimatedValue * 0.05, // Estimate
-        monthlyRent: 0, // Not in your schema
+        monthlyRent: 0,
       };
       // Pass the property to the parent component
       onPropertyAdded(newProperty);

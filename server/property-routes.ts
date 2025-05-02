@@ -97,18 +97,24 @@ router.post('/', authMiddleware, async (req, res, next) => {
 
     const {
       address,
-      estimatedValue, // estValue in DB
-      estimatedRangeLow, // range in DB (we'll use the low range)
-      type, // type in DB
-      beds, // beds in DB
-      bath, // bath in DB
-      squareFootage, // sqft in DB
-      yearBuilt, // built in DB
-      lastSale, // lastSale in DB
+      estimatedValue,
+      estimatedRangeLow,
+      type,
+      beds,
+      bath,
+      squareFootage,
+      yearBuilt,
+      lastSale,
+      lastSalePrice,
     } = req.body;
     if (!address) {
       throw new ClientError(400, 'Address is required');
     }
+
+    const apiKey = process.env.GOOGLE_MAPS_API_KEY;
+    const imageUrl = `https://maps.googleapis.com/maps/api/streetview?size=600x400&location=${encodeURIComponent(
+      address
+    )}&key=${apiKey}`;
 
     const sql = `
         INSERT into "properties" 
@@ -116,14 +122,15 @@ router.post('/', authMiddleware, async (req, res, next) => {
         "address",
         "estimatedValue",
         "estimatedRangeLow",
-        "estimatedRangeHigh",
         "type",
         "beds",
         "bath",
         "squareFootage",
         "yearBuilt",
-        "lastSale")
-        values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+        "lastSale",
+        "lastSalePrice",
+        "imageUrl")
+        values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
         RETURNING *;
         `;
 
@@ -133,11 +140,13 @@ router.post('/', authMiddleware, async (req, res, next) => {
       Math.round(estimatedValue) || 0,
       Math.round(estimatedRangeLow) || 0,
       type || 'Single Family',
-      parseInt(beds) || 0,
-      parseFloat(bath) || 0,
+      beds || 0,
+      bath || 0,
       Math.round(squareFootage) || 0,
       Math.round(yearBuilt) || 0,
       lastSale || '',
+      Math.round(lastSalePrice) || 0,
+      imageUrl,
     ];
     console.log('Params:', params);
 
@@ -186,41 +195,44 @@ router.put('/:propertyId', async (req, res, next) => {
 
     const {
       address,
-      estValue,
-      range,
+      estimatedValue,
+      estimatedRangeLow,
       type,
       beds,
       bath,
-      sqft,
-      built,
+      squareFootage,
+      yearBuilt,
       lastSale,
+      lastSalePrice,
     } = req.body;
 
     const sql = `
         UPDATE "properties"
         SET "address" = $1,
-        "estValue" = $2,
-        "range" = $3,
+        "estimatedValue" = $2,
+        "estimatedRangeLow" = $3,
         "type" = $4,
         "beds" = $5,
         "bath" = $6,
-        "sqft" = $7,
-        "built" = $8,
-        "lastSale" = $9
-        WHERE "propertyId" = $10
+        "squareFootage" = $7,
+        "yearBuilt" = $8,
+        "lastSale" = $9,
+        "lastSalePrice" = $10
+        WHERE "propertyId" = $11
         RETURNING *;
         `;
 
     const params = [
       address || null,
-      estValue !== undefined ? estValue : null,
-      range !== undefined ? range : null,
+      estimatedValue !== undefined ? Math.round(estimatedValue) : null,
+      estimatedRangeLow !== undefined ? Math.round(estimatedRangeLow) : null,
       type || null,
       beds || null,
       bath || null,
-      sqft !== undefined ? sqft : null,
-      built !== undefined ? built : null,
+      squareFootage !== undefined ? Math.round(squareFootage) : null,
+      yearBuilt !== undefined ? Math.round(yearBuilt) : null,
       lastSale || null,
+      lastSalePrice !== undefined ? Math.round(lastSalePrice) : null,
       propertyId,
     ];
 

@@ -1,5 +1,7 @@
 import { ReactNode, createContext, useState } from 'react';
-import { removeAuth, saveAuth } from '../lib/data';
+import { Auth, removeAuth, saveAuth } from '../lib/data';
+
+const authKey = 'um.auth';
 
 export type User = {
   userId: number;
@@ -23,8 +25,11 @@ type Props = {
   children: ReactNode;
 };
 export function UserProvider({ children }: Props) {
-  const [user, setUser] = useState<User>();
-  const [token, setToken] = useState<string>();
+  const storedAuth = localStorage.getItem(authKey);
+  const initialAuth = storedAuth ? (JSON.parse(storedAuth) as Auth) : null;
+
+  const [user, setUser] = useState<User | undefined>(initialAuth?.user);
+  const [token, setToken] = useState<string | undefined>(initialAuth?.token);
 
   function handleSignIn(user: User, token: string) {
     setUser(user);
