@@ -1,4 +1,3 @@
-
 import { motion } from 'motion/react';
 import { AuroraBackground } from '../components/ui/aurora-background';
 import { Button } from '../components/ui/button';
@@ -22,10 +21,9 @@ export default function LandingPage() {
         </div>
         <div className="font-extralight text-base md:text-4xl dark:text-neutral-200 py-6 max-w-3xl">
           <p className="text-center mx-10 px-4">
-            Make every financial decision with AI-powered clarity. FinSight
-            analyzes your entire portfolio, highlighting strengths, flagging
-            risks, and suggesting smart moves based on your unique financial
-            position.
+            FinSight centralizes your real estate and investment accounts,
+            giving you a clearer view of your portfolio and personalized
+            insights to help you grow it.
           </p>
         </div>
         <Button size="lg" asChild>
@@ -34,5 +32,4 @@ export default function LandingPage() {
       </motion.div>
     </AuroraBackground>
   );
-
 }
