@@ -195,48 +195,20 @@ router.put('/:propertyId', async (req, res, next) => {
       throw new ClientError(403, 'Not authorized to update this property');
     }
 
-    const {
-      address,
-      estimatedValue,
-      estimatedRangeLow,
-      type,
-      beds,
-      bath,
-      squareFootage,
-      yearBuilt,
-      lastSale,
-      lastSalePrice,
-    } = req.body;
-
-    const normalizedAddress = normalizeAddress(address);
+    const { notes, monthlyRent } = req.body;
 
     const sql = `
         UPDATE "properties"
-        SET "address" = $1,
-        "estimatedValue" = $2,
-        "estimatedRangeLow" = $3,
-        "type" = $4,
-        "beds" = $5,
-        "bath" = $6,
-        "squareFootage" = $7,
-        "yearBuilt" = $8,
-        "lastSale" = $9,
-        "lastSalePrice" = $10
-        WHERE "propertyId" = $11
+        SET 
+        "notes" = $1,
+        "monthlyRent" = $2
+        WHERE "propertyId" = $3
         RETURNING *;
         `;
 
     const params = [
-      normalizedAddress || null,
-      estimatedValue !== undefined ? Math.round(estimatedValue) : null,
-      estimatedRangeLow !== undefined ? Math.round(estimatedRangeLow) : null,
-      type || null,
-      beds || null,
-      bath || null,
-      squareFootage !== undefined ? Math.round(squareFootage) : null,
-      yearBuilt !== undefined ? Math.round(yearBuilt) : null,
-      lastSale || null,
-      lastSalePrice !== undefined ? Math.round(lastSalePrice) : null,
+      notes || null,
+      monthlyRent !== undefined ? Math.round(monthlyRent) : null,
       propertyId,
     ];
 
