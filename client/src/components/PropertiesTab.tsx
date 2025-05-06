@@ -12,7 +12,7 @@ import { getStreetViewImage } from '@/lib/utils';
 
 interface DbProperty {
   propertyId: number;
-  address: string;
+  formattedAddress: string;
   type: string;
   beds: number;
   bath: number;
@@ -57,8 +57,7 @@ export default function PropertiesTab() {
         const formattedProperties: PropertyType[] = dbProperties.map(
           (prop: DbProperty) => ({
             id: prop.propertyId,
-            address: prop.address,
-            formattedAddress: prop.address,
+            formattedAddress: prop.formattedAddress,
             propertyType: prop.type,
             bedrooms: prop.beds,
             bathrooms: prop.bath,
@@ -71,7 +70,7 @@ export default function PropertiesTab() {
             estimatedRangeHigh:
               prop.estimatedValue + prop.estimatedValue * 0.05, // Estimate
             monthlyRent: prop.monthlyRent || 0,
-            image: getStreetViewImage(prop.address),
+            image: getStreetViewImage(prop.formattedAddress),
             notes: prop.notes || '',
           })
         );
@@ -87,11 +86,11 @@ export default function PropertiesTab() {
 
   // Handle adding a new property
   function handlePropertyAdded(newProperty: PropertyType) {
-    if (!newProperty.image && newProperty.address) {
+    if (!newProperty.image && newProperty.formattedAddress) {
       // If the property doesn't have an image yet but has an address
       const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
       newProperty.image = `https://maps.googleapis.com/maps/api/streetview?size=600x400&location=${encodeURIComponent(
-        newProperty.address
+        newProperty.formattedAddress
       )}&key=${apiKey}`;
     }
     setProperties([...properties, newProperty]);
@@ -163,7 +162,7 @@ export default function PropertiesTab() {
   const cardsData = properties.map((property) => ({
     id: property.id,
     category: property.propertyType,
-    title: property.address,
+    title: property.formattedAddress,
     subtitle: `${property.bedrooms} bed, ${property.bathrooms} bath`,
     src: property.image || '',
     content: (

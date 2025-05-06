@@ -55,7 +55,7 @@ export function AddPropertyForm({
 
     //Format data for database
     const dataToSend = {
-      address: propertyData.formattedAddress,
+      formattedAddress: propertyData.formattedAddress,
       estimatedValue: propertyData.estimatedValue || propertyData.price || 0,
       estimatedRangeLow:
         propertyData.estimatedRangeLow || propertyData.priceRangeLow || 0,
@@ -94,8 +94,7 @@ export function AddPropertyForm({
     // Transform the database response to match PropertyType
     return {
       id: savedProperty.id,
-      address: savedProperty.address,
-      formattedAddress: savedProperty.address,
+      formattedAddress: savedProperty.formattedAddress,
       propertyType: savedProperty.type,
       bedrooms: savedProperty.beds,
       bathrooms: savedProperty.bath,
@@ -107,6 +106,7 @@ export function AddPropertyForm({
       estimatedRangeLow: savedProperty.estimatedRangeLow,
       monthlyRent: 0,
       image: savedProperty.imageUrl,
+      notes: '',
     };
   }
 

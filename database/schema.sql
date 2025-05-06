@@ -16,7 +16,7 @@ CREATE TABLE "users" (
 CREATE TABLE "properties" (
   "propertyId" serial PRIMARY KEY,
   "userId" integer REFERENCES "users" ("userId"),
-  "address" text,
+  "formattedAddress" text,
   "estimatedValue" integer,
   "estimatedRangeLow" integer,
   "estimatedRangeHigh" integer,
