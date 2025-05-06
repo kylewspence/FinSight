@@ -107,6 +107,10 @@ export function AddPropertyForm({
       monthlyRent: 0,
       image: savedProperty.imageUrl,
       notes: '',
+      mortgagePayment: 0,
+      mortgageBalance: 0,
+      hoaPayment: 0,
+      interestRate: 0,
     };
   }
 

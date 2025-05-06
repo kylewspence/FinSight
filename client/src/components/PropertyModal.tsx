@@ -32,23 +32,68 @@ export function PropertyModal({
   function handleInputChange(
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) {
-    // Extracts name and value from the event target
     const { name, value } = e.target;
-    // Converts rent to a number if its a valid number
-    const processedValue =
-      name === 'monthlyRent' && value !== '' ? Number(value) : value;
-    setEditedProperty((prev) => ({
-      ...prev,
-      [name]: processedValue,
-    }));
+
+    // For numeric fields, remove commas and convert to numbers
+    const numericFields = [
+      'monthlyRent',
+      'mortgageBalance',
+      'mortgagePayment',
+      'interestRate',
+      'hoaPayment',
+    ];
+
+    if (numericFields.includes(name)) {
+      // For display purposes, keep the formatted input
+      setEditedProperty((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    } else {
+      // For non-numeric fields, just use the value directly
+      setEditedProperty((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   }
+
   // Save changes
   function handleSaveChanges(e?: React.FormEvent) {
     if (e) {
       e.preventDefault();
     }
+
+    // Helper function to parse formatted numbers
+    function parseNumberInput(value: any): number {
+      if (typeof value === 'string') {
+        // Remove currency symbols, commas and spaces
+        const cleanValue = value.replace(/[$,\s]/g, '');
+        return cleanValue ? Number(cleanValue) : 0;
+      }
+      return value || 0;
+    }
+
     try {
-      onUpdate(editedProperty);
+      // Make a copy of the edited property
+      const cleanedProperty = { ...editedProperty };
+
+      // Explicitly convert each field to a number
+      cleanedProperty.mortgageBalance = parseNumberInput(
+        editedProperty.mortgageBalance
+      );
+      cleanedProperty.mortgagePayment = parseNumberInput(
+        editedProperty.mortgagePayment
+      );
+      cleanedProperty.interestRate = parseNumberInput(
+        editedProperty.interestRate
+      );
+      cleanedProperty.hoaPayment = parseNumberInput(editedProperty.hoaPayment);
+      cleanedProperty.monthlyRent = parseNumberInput(
+        editedProperty.monthlyRent
+      );
+
+      onUpdate(cleanedProperty);
       setIsEditing(false);
     } catch (error) {
       console.error('Error updating property:', error);
@@ -76,29 +121,85 @@ export function PropertyModal({
           <form onSubmit={handleSaveChanges}>
             <div className="grid gap-4">
               <div className="grid gap-2">
+                <Label htmlFor="mortgageBalance">Mortgage Balance</Label>
+                <Input
+                  id="mortgageBalance"
+                  name="mortgageBalance"
+                  value={editedProperty.mortgageBalance || ''}
+                  onChange={handleInputChange}
+                  placeholder="Mortgage Balance"
+                  className="w-full"
+                />
+              </div>
+            </div>
+
+            <div className="grid gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="mortgagePayment">Mortgage Payment</Label>
+                <Input
+                  id="mortgagePayment"
+                  name="mortgagePayment"
+                  value={editedProperty.mortgagePayment || ''}
+                  onChange={handleInputChange}
+                  placeholder="Mortgage Payment"
+                  className="w-full"
+                />
+              </div>
+            </div>
+
+            <div className="grid gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="monthlyRent">Interest Rate</Label>
+                <Input
+                  id="interestRate"
+                  name="interestRate"
+                  value={editedProperty.interestRate || ''}
+                  onChange={handleInputChange}
+                  placeholder="Interest Rate"
+                  className="w-full"
+                />
+              </div>
+            </div>
+
+            <div className="grid gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="monthlyRent">HOA Payment</Label>
+                <Input
+                  id="hoaPayment"
+                  name="hoaPayment"
+                  value={editedProperty.hoaPayment || ''}
+                  onChange={handleInputChange}
+                  placeholder="HOA Monthly Dues"
+                  className="w-full"
+                />
+              </div>
+            </div>
+
+            <div className="grid gap-4">
+              <div className="grid gap-2">
                 <Label htmlFor="monthlyRent">Monthly Rent</Label>
                 <Input
                   id="monthlyRent"
                   name="monthlyRent"
                   value={editedProperty.monthlyRent || ''}
                   onChange={handleInputChange}
-                  placeholder="HOA information, website links, or other notes about this property"
+                  placeholder="Monthly Rent"
                   className="w-full"
                 />
+              </div>
+            </div>
 
-                <div className="grid gap-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="notes">Notes</Label>
-                    <Textarea
-                      id="notes"
-                      name="notes"
-                      value={editedProperty.notes || ''}
-                      onChange={handleInputChange}
-                      placeholder="HOA information, website links, or other notes about this property"
-                      className="h-32"
-                    />
-                  </div>
-                </div>
+            <div className="grid gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="notes">Notes</Label>
+                <Textarea
+                  id="notes"
+                  name="notes"
+                  value={editedProperty.notes || ''}
+                  onChange={handleInputChange}
+                  placeholder="HOA information, website links, or other notes about this property"
+                  className="h-32"
+                />
               </div>
             </div>
           </form>
@@ -137,7 +238,9 @@ export function PropertyModal({
               property.estimatedRangeLow || property.priceRangeLow || 0
             )}{' '}
             -{' '}
-            {formatCurrency(property.estimatedRangeHigh || property.price || 0)}
+            {formatCurrency(
+              property.estimatedRangeHigh || property.priceRangeHigh || 0
+            )}
           </div>
         </div>
 
@@ -158,6 +261,38 @@ export function PropertyModal({
             {formatCurrency(property.lastSalePrice)}
           </div>
         </div>
+
+        {property.mortgageBalance !== undefined && (
+          <div className="grid gap-1">
+            <div className="text-sm font-medium">Mortgage Balance</div>
+            <div className="text-sm">
+              {formatCurrency(property.mortgageBalance)}
+            </div>
+          </div>
+        )}
+
+        {property.mortgagePayment !== undefined && (
+          <div className="grid gap-1">
+            <div className="text-sm font-medium">Mortgage Payment</div>
+            <div className="text-sm">
+              {formatCurrency(property.mortgagePayment)}
+            </div>
+          </div>
+        )}
+
+        {property.interestRate !== undefined && (
+          <div className="grid gap-1">
+            <div className="text-sm font-medium">Interest Rate</div>
+            <div className="text-sm">{property.interestRate}%</div>
+          </div>
+        )}
+
+        {property.hoaPayment !== undefined && (
+          <div className="grid gap-1">
+            <div className="text-sm font-medium">HOA Payment</div>
+            <div className="text-sm">{formatCurrency(property.hoaPayment)}</div>
+          </div>
+        )}
 
         {property.monthlyRent !== undefined && (
           <div className="grid gap-1">

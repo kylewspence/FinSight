@@ -26,6 +26,10 @@ interface DbProperty {
   imageUrl?: string;
   notes?: string;
   monthlyRent?: number;
+  mortgagePayment?: number;
+  mortgageBalance?: number;
+  hoaPayment?: number;
+  interestRate?: number;
 }
 
 export default function PropertiesTab() {
@@ -68,10 +72,14 @@ export default function PropertiesTab() {
             estimatedValue: prop.estimatedValue,
             estimatedRangeLow: prop.estimatedRangeLow,
             estimatedRangeHigh:
-              prop.estimatedValue + prop.estimatedValue * 0.05, // Estimate
+              prop.estimatedValue + prop.estimatedValue * 0.04,
             monthlyRent: prop.monthlyRent || 0,
             image: getStreetViewImage(prop.formattedAddress),
             notes: prop.notes || '',
+            mortgagePayment: prop.mortgagePayment || 0,
+            mortgageBalance: prop.mortgageBalance || 0,
+            hoaPayment: prop.hoaPayment || 0,
+            interestRate: prop.interestRate || 0,
           })
         );
 
@@ -113,6 +121,10 @@ export default function PropertiesTab() {
         body: JSON.stringify({
           monthlyRent: updatedProperty.monthlyRent || 0,
           notes: updatedProperty.notes || '',
+          mortgageBalance: updatedProperty.mortgageBalance || 0,
+          mortgagePayment: updatedProperty.mortgagePayment || 0,
+          interestRate: updatedProperty.interestRate || 0,
+          hoaPayment: updatedProperty.hoaPayment || 0,
         }),
       });
 
@@ -164,6 +176,7 @@ export default function PropertiesTab() {
     category: property.propertyType,
     title: property.formattedAddress,
     subtitle: `${property.bedrooms} bed, ${property.bathrooms} bath`,
+    squareFootage: property.squareFootage,
     src: property.image || '',
     content: (
       <PropertyModal

@@ -12,10 +12,14 @@ export interface PropertyType {
   estimatedValue: number;
   estimatedRangeLow?: number;
   estimatedRangeHigh?: number;
-  priceRangehigh?: number;
-  priceRangeLow?: number; // For compatibility with RentCast API
-  price?: number; // For compatibility with RentCast API
+  priceRangeHigh?: number;
+  priceRangeLow?: number;
+  price?: number;
   monthlyRent?: number;
   image?: string;
   notes: string;
+  mortgagePayment: number;
+  mortgageBalance: number;
+  hoaPayment: number;
+  interestRate: number;
 }

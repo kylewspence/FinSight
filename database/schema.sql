@@ -26,7 +26,11 @@ CREATE TABLE "properties" (
   "squareFootage" integer,
   "lastSale" text,
   "lastSalePrice" integer,
-  "yearBuilt" integer
+  "yearBuilt" integer,
+  "mortgagePayment" integer,
+  "mortgageBalance" integer,
+  "hoaPayment" integer,
+  "interestRate" integer
 );
 
 

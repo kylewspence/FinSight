@@ -99,6 +99,7 @@ router.post('/', authMiddleware, async (req, res, next) => {
       formattedAddress,
       estimatedValue,
       estimatedRangeLow,
+      estimatedRangeHigh,
       type,
       beds,
       bath,
@@ -122,6 +123,7 @@ router.post('/', authMiddleware, async (req, res, next) => {
         "formattedAddress",
         "estimatedValue",
         "estimatedRangeLow",
+        "estimatedRangeHigh",
         "type",
         "beds",
         "bath",
@@ -130,7 +132,7 @@ router.post('/', authMiddleware, async (req, res, next) => {
         "lastSale",
         "lastSalePrice",
         "imageUrl")
-        values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+        values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
         RETURNING *;
         `;
 
@@ -139,6 +141,7 @@ router.post('/', authMiddleware, async (req, res, next) => {
       formattedAddress,
       Math.round(estimatedValue) || 0,
       Math.round(estimatedRangeLow) || 0,
+      Math.round(estimatedRangeHigh) || 0,
       type || 'Single Family',
       beds || 0,
       bath || 0,
@@ -193,20 +196,35 @@ router.put('/:propertyId', async (req, res, next) => {
       throw new ClientError(403, 'Not authorized to update this property');
     }
 
-    const { notes, monthlyRent } = req.body;
+    const {
+      notes,
+      monthlyRent,
+      mortgagePayment,
+      mortgageBalance,
+      hoaPayment,
+      interestRate,
+    } = req.body;
 
     const sql = `
         UPDATE "properties"
         SET 
         "notes" = $1,
-        "monthlyRent" = $2
-        WHERE "propertyId" = $3
+        "monthlyRent" = $2,
+        "mortgagePayment" = $3,
+        "mortgageBalance" = $4,
+        "hoaPayment" = $5,
+        "interestRate" = $6
+        WHERE "propertyId" = $7
         RETURNING *;
         `;
 
     const params = [
       notes || null,
       monthlyRent !== undefined ? Math.round(monthlyRent) : null,
+      mortgagePayment !== undefined ? Math.round(mortgagePayment) : null,
+      mortgageBalance !== undefined ? Math.round(mortgageBalance) : null,
+      hoaPayment !== undefined ? Math.round(hoaPayment) : null,
+      interestRate !== undefined ? Math.round(interestRate) : null,
       propertyId,
     ];
 
