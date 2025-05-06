@@ -11,6 +11,7 @@ export function CsvUpload({ onUploadComplete }: CsvUploadProps = {}) {
   const [fileName, setFileName] = useState('');
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [accountName, setAccountName] = useState('');
 
   // This function runs when the user selects a file
   function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -37,9 +38,10 @@ export function CsvUpload({ onUploadComplete }: CsvUploadProps = {}) {
       if (!token) throw new Error('Authentication required');
 
       const formData = new FormData();
-      formData.append('csvFile', file);
+      formData.append('file', file);
+      formData.append('accountName', accountName || 'Default Account');
 
-      const response = await fetch('/api/uploads/csv', {
+      const response = await fetch('/api/investments/csv', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -56,6 +58,7 @@ export function CsvUpload({ onUploadComplete }: CsvUploadProps = {}) {
       setMessage(`File "${result.fileName}" uploaded successfully!`);
       setFile(null);
       setFileName('');
+      setAccountName('');
 
       // Reset the file input
       const fileInput = document.getElementById('csv-file') as HTMLInputElement;
@@ -91,6 +94,26 @@ export function CsvUpload({ onUploadComplete }: CsvUploadProps = {}) {
             className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 
       file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
           />
+        </div>
+
+        <div className="mb-4">
+          <label
+            htmlFor="account-name"
+            className="block text-sm font-medium mb-1">
+            Account Type
+          </label>
+          <select
+            id="account-name"
+            value={accountName}
+            onChange={(e) => setAccountName(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+            <option value="">Select Account Type</option>
+            <option value="Brokerage">Brokerage</option>
+            <option value="IRA">IRA</option>
+            <option value="Roth IRA">Roth IRA</option>
+            <option value="401k">401k</option>
+            <option value="Other">Other</option>
+          </select>
         </div>
 
         {file && (
