@@ -41,13 +41,14 @@ CREATE TABLE "properties" (
 
 CREATE TABLE "holdings" (
   "holding_id" SERIAL PRIMARY KEY,
-   "user_id" INTEGER REFERENCES "users"("userId"),
+  "user_id" INTEGER REFERENCES "users"("userId"),
   "account_number" TEXT NOT NULL,
   "investment_name" TEXT NOT NULL,
   "symbol" TEXT NOT NULL,
   "shares" NUMERIC NOT NULL,
   "share_price" NUMERIC NOT NULL,
-  "total_value" NUMERIC NOT NULL
+  "total_value" NUMERIC NOT NULL,
+  "upload_account_type" TEXT
 );
 
 CREATE TABLE "transactions" (

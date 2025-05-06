@@ -14,6 +14,7 @@ type Holdings = {
   shares: number;
   sharePrice: number;
   totalValue: number;
+  accountType: string;
 };
 
 type Transactions = {
@@ -68,6 +69,11 @@ router.post('/csv', csvUploadsMiddleware.single('file'), (req, res) => {
         return res.status(401).json({ error: 'User not authenticated' });
       }
       const userId = req.user.userId;
+      const accountType = req.body.accountName || 'Default Account';
+
+      if (!accountType) {
+        return res.status(400).json({ error: 'Account type is required' });
+      }
 
       if (row.length === 7) {
         holdings.push({
@@ -78,6 +84,7 @@ router.post('/csv', csvUploadsMiddleware.single('file'), (req, res) => {
           shares: parseFloat(row[3]),
           sharePrice: parseFloat(row[4]),
           totalValue: parseFloat(row[5]),
+          accountType,
         });
       } else if (row.length === 15) {
         transactions.push({
@@ -95,7 +102,7 @@ router.post('/csv', csvUploadsMiddleware.single('file'), (req, res) => {
           fees: parseFloat(row[10]),
           netAmount: parseFloat(row[11]),
           accruedInterest: parseFloat(row[12]),
-          accountType: row[13],
+          accountType,
         });
       } else {
         console.warn('Unexpected row length:', row.length, row);
@@ -112,8 +119,9 @@ router.post('/csv', csvUploadsMiddleware.single('file'), (req, res) => {
               symbol,
               shares,
               share_price,
-              total_value
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7);
+              total_value,
+              upload_account_type
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8);
           `;
           const params = [
             h.accountNumber,
@@ -123,6 +131,7 @@ router.post('/csv', csvUploadsMiddleware.single('file'), (req, res) => {
             h.shares,
             h.sharePrice,
             h.totalValue,
+            h.accountType,
           ];
           await db.query(sql, params);
         }
@@ -169,13 +178,11 @@ router.post('/csv', csvUploadsMiddleware.single('file'), (req, res) => {
           ];
           await db.query(sql, params);
         }
-        res
-          .status(200)
-          .json({
-            message: 'Upload parsed',
-            holdingsCount: holdings.length,
-            transactionsCount: transactions.length,
-          });
+        res.status(200).json({
+          message: 'Upload parsed',
+          holdingsCount: holdings.length,
+          transactionsCount: transactions.length,
+        });
       } catch (err) {
         console.error('DB insert error:', err);
         res.status(500).json({ error: 'DB insert failed' });
