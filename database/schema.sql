@@ -42,9 +42,11 @@ CREATE TABLE "transactions" (
 CREATE TABLE "holdings" (
   "holdingId" serial PRIMARY KEY,
   "userId" integer REFERENCES "users" ("userId"),
-  "shares" integer,
-  "symbol" text,
-  "sector" text
+  "symbol" text NOT NULL,
+  "shares" numeric NOT NULL,
+  "accountName" text NOT NULL,
+  "sector" text,
+  "lastUpdated" timestamptz DEFAULT now(),
 );
 
 CREATE TABLE "insights" (

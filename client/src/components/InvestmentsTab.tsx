@@ -1,4 +1,4 @@
-import { Plus } from 'lucide-react';
+import { FileSpreadsheet } from 'lucide-react';
 import { ButtonWithIcon } from './ui/buttonwithicon';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { formatCurrency } from '@/lib/utils';
@@ -28,6 +28,9 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
+import { useState } from 'react';
+import { Modal } from './ui/modal';
+import { CsvUpload } from './CsvUpload';
 
 // Mock data
 const portfolioData = {
@@ -151,6 +154,7 @@ const performanceData = [
 ];
 
 export default function InvestmentsTab() {
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const startPortfolio = performanceData[0].portfolio;
   const endPortfolio = performanceData[performanceData.length - 1].portfolio;
   const portfolioChange =
@@ -161,12 +165,25 @@ export default function InvestmentsTab() {
   const sp500Change = ((endSP500 - startSP500) / startSP500) * 100;
 
   const totalGrowth = portfolioData.totalValue - portfolioData.previousValue;
+
+  function handleUploadComplete() {
+    // Close the modal
+    setIsUploadModalOpen(false);
+    alert('File uploaded successfully!');
+
+    // Optionally reload the holdings data
+  }
+
   return (
     <>
       <div className="flex flex-col gap-4">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold">My Investments</h2>
-          <ButtonWithIcon icon={Plus} children="Add Investment" />
+          <ButtonWithIcon
+            icon={FileSpreadsheet}
+            onClick={() => setIsUploadModalOpen(true)}>
+            Upload Statement
+          </ButtonWithIcon>
         </div>
 
         {/* // TOTAL PORTFOLIO VALUE */}
@@ -638,6 +655,12 @@ export default function InvestmentsTab() {
           </Card>
         </div>
       </div>
+      <Modal
+        isOpen={isUploadModalOpen}
+        onClose={() => setIsUploadModalOpen(false)}
+        title="Upload Investment Statement">
+        <CsvUpload onUploadComplete={handleUploadComplete} />
+      </Modal>
     </>
   );
 }

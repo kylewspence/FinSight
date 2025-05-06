@@ -1,7 +1,7 @@
-import { ClientError, authMiddleware } from './lib/index.js';
+import { ClientError, authMiddleware } from '../lib/index.js';
 import express from 'express';
 import pg from 'pg';
-import { normalizeAddress } from '../client/src/lib/utils.js';
+import { normalizeAddress } from '../../client/src/lib/utils.js';
 const db = new pg.Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {

@@ -1,5 +1,5 @@
 import express from 'express';
-import { ClientError, authMiddleware } from './lib/index.js';
+import { ClientError, authMiddleware } from '../lib/index.js';
 import pg from 'pg';
 
 const db = new pg.Pool({

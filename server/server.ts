@@ -2,12 +2,13 @@
 import 'dotenv/config';
 import express from 'express';
 import pg from 'pg';
-import { ClientError, errorMiddleware, authMiddleware } from './lib/index';
-import propertyRoutes from './property-routes';
-import transactionRoutes from './transaction-routes';
+import { errorMiddleware } from './lib/index';
+import propertyRoutes from './routes/property-routes';
+import transactionRoutes from './routes/transaction-routes';
 import authRoutes from './auth-routes';
 import propertyRentcastRoute from './routes/rentcast/property';
 import valueRentcastRoute from './routes/rentcast/value';
+import investmentRoutes from './routes/investment-routes';
 
 const db = new pg.Pool({
   connectionString: process.env.DATABASE_URL,
@@ -39,6 +40,9 @@ app.use('/api/transactions', transactionRoutes);
 
 // Auth Routes
 app.use('/api/auth', authRoutes);
+
+// Investment Routes
+app.use('/api/investments', investmentRoutes);
 
 // RentCast Routes
 app.use('/api/rentcast/property', propertyRentcastRoute);
