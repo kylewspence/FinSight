@@ -30,17 +30,12 @@ export default function Layout() {
               />
             </Link>
 
-            <div className="flex space-x-4">
-              <Link
-                to="/dashboard"
-                className="px-3 py-2 rounded hover:bg-gray-700">
-                Dashboard - temp
-              </Link>
-              <div className="flex items-center gap-2">
+            {user && (
+              <div className="flex items-center gap-10">
                 <span>Welcome, {user?.userName}</span>
                 <Button onClick={handleLogout}>Logout</Button>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </nav>
