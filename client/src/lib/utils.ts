@@ -29,6 +29,7 @@ export function getStreetViewImage(address: string): string {
   return `https://maps.googleapis.com/maps/api/streetview?size=${size}&location=${formattedAddress}&key=${apiKey}`;
 }
 
+// No longer need. API provides formatted address.
 export function normalizeAddress(address: string): string {
   const parts = address.split(',').map((part) => part.trim());
   const normalized = parts.map((part) =>

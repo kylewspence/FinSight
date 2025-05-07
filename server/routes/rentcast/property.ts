@@ -58,7 +58,7 @@ router.get('/', async (req, res, next) => {
 
     // Format the data to match our expected schema before sending it to the client.
     const formattedData = {
-      formattedAddress: propertyData.address || address,
+      formattedAddress: propertyData.formattedAddress || address,
       propertyType: propertyData.propertyType || 'Single Family',
       bedrooms: propertyData.bedrooms || 0,
       bathrooms: propertyData.bathrooms || 0,
