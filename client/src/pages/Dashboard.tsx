@@ -6,6 +6,7 @@ import { readToken } from '@/lib/data';
 import { useEffect } from 'react';
 import { useState } from 'react';
 import { PropertyType } from '@/types/PropertyTypes';
+import InsightsTab from '@/components/InsightsTab';
 
 export default function Dashboard() {
   const [properties, setProperties] = useState<PropertyType[]>([]);
@@ -48,8 +49,8 @@ export default function Dashboard() {
           <InvestmentsTab />
         </TabsContent>
 
-        <TabsContent value="AI Insights">
-          <p>AI Insights will be displayed here</p>
+        <TabsContent value="insights">
+          <InsightsTab />
         </TabsContent>
       </Tabs>
     </div>
