@@ -307,7 +307,7 @@ export default function InvestmentsTab() {
         </div>
 
         {/* // INVESTMENT ACCOUNTS */}
-        <div className="mt-8">
+        <div className="mt-8 mb-8">
           <h3 className="text-xl font-bold mb-4">Investment Accounts</h3>
           <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             {accountsData.map((account) => (
@@ -352,9 +352,9 @@ export default function InvestmentsTab() {
         {/* // HOLDINGS BREAKDOWN - PAGINATED */}
 
         {/* // SEARCH AND FILTER */}
-        <div className="flex justify-between items-center mb-4">
+        <div className="flex justify-between items-center mb-1">
           <h3 className="text-xl font-bold">Holdings Breakdown</h3>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center justify-end gap-3">
             <div className="w-64">
               <Input placeholder="Search holdings..." />
             </div>
@@ -374,81 +374,77 @@ export default function InvestmentsTab() {
         </div>
 
         {/* TABLE  */}
-        <div className="mt-8">
-          <h3 className="text-xl font-bold mb-4">Holdings Breakdown</h3>
-          <Card>
-            <CardContent className="p-0">
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b">
-                      <th className="text-center p-3">Symbol</th>
-                      <th className="text-center p-3">Name</th>
-                      <th className="text-center p-3">Category</th>
-                      <th className="text-center p-3">Shares</th>
-                      <th className="text-center p-3">Price</th>
-                      <th className="text-center p-3">Value</th>
-                      <th className="text-center p-3">Gain/Loss</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {holdingsData.map((holding) => (
-                      <tr
-                        key={holding.id}
-                        className="border-b hover:bg-muted/50">
-                        <td className="p-3 font-medium">{holding.symbol}</td>
-                        <td className="p-3">{holding.name}</td>
-                        <td className="p-3">{holding.category}</td>
-                        <td className="p-3 text-center">{holding.shares}</td>
-                        <td className="p-3 text-center">
-                          {formatCurrency(holding.price)}
-                        </td>
-                        <td className="p-3 text-center">
-                          {formatCurrency(holding.value)}
-                        </td>
-                        <td className="p-3 text-center">
-                          <div
-                            className={
-                              holding.gainPercent >= 0
-                                ? 'text-green-500'
-                                : 'text-red-500'
-                            }>
-                            {formatCurrency(holding.gain)} (
-                            {holding.gainPercent >= 0 ? '+' : ''}
-                            {holding.gainPercent.toFixed(1)}%)
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                  <tfoot>
-                    <tr className="bg-muted/50">
-                      <td colSpan={5} className="p-3 font-bold text-right">
-                        Total:
+
+        <Card>
+          <CardContent className="p-0">
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b">
+                    <th className="text-center p-3">Symbol</th>
+                    <th className="text-center p-3">Name</th>
+                    <th className="text-center p-3">Category</th>
+                    <th className="text-center p-3">Shares</th>
+                    <th className="text-center p-3">Price</th>
+                    <th className="text-center p-3">Value</th>
+                    <th className="text-center p-3">Gain/Loss</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {holdingsData.map((holding) => (
+                    <tr key={holding.id} className="border-b hover:bg-muted/50">
+                      <td className="p-3 font-medium">{holding.symbol}</td>
+                      <td className="p-3">{holding.name}</td>
+                      <td className="p-3">{holding.category}</td>
+                      <td className="p-3 text-center">{holding.shares}</td>
+                      <td className="p-3 text-center">
+                        {formatCurrency(holding.price)}
                       </td>
-                      <td className="p-3 font-bold text-center">
-                        {formatCurrency(
-                          holdingsData.reduce(
-                            (sum, holding) => sum + holding.value,
-                            0
-                          )
-                        )}
+                      <td className="p-3 text-center">
+                        {formatCurrency(holding.value)}
                       </td>
-                      <td className="p-3 font-bold text-center">
-                        {formatCurrency(
-                          holdingsData.reduce(
-                            (sum, holding) => sum + holding.gain,
-                            0
-                          )
-                        )}
+                      <td className="p-3 text-center">
+                        <div
+                          className={
+                            holding.gainPercent >= 0
+                              ? 'text-green-500'
+                              : 'text-red-500'
+                          }>
+                          {formatCurrency(holding.gain)} (
+                          {holding.gainPercent >= 0 ? '+' : ''}
+                          {holding.gainPercent.toFixed(1)}%)
+                        </div>
                       </td>
                     </tr>
-                  </tfoot>
-                </table>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+                  ))}
+                </tbody>
+                <tfoot>
+                  <tr className="bg-muted/50">
+                    <td colSpan={5} className="p-3 font-bold text-right">
+                      Total:
+                    </td>
+                    <td className="p-3 font-bold text-center">
+                      {formatCurrency(
+                        holdingsData.reduce(
+                          (sum, holding) => sum + holding.value,
+                          0
+                        )
+                      )}
+                    </td>
+                    <td className="p-3 font-bold text-center">
+                      {formatCurrency(
+                        holdingsData.reduce(
+                          (sum, holding) => sum + holding.gain,
+                          0
+                        )
+                      )}
+                    </td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* // PAGINATION */}
         <div className="py-4 flex justify-center">
@@ -472,7 +468,7 @@ export default function InvestmentsTab() {
           </Pagination>
         </div>
 
-        <div className="mt-8">
+        <div>
           <h3 className="text-xl font-bold mb-4">Recent Transactions</h3>
           <Card>
             <CardContent className="p-0">
@@ -489,28 +485,32 @@ export default function InvestmentsTab() {
                   </thead>
                   <tbody>
                     <tr className="border-b hover:bg-muted/50">
-                      <td className="p-3">2023-12-15</td>
-                      <td className="p-3">Buy</td>
-                      <td className="p-3 font-medium">VTI</td>
-                      <td className="p-3">Bought 10 shares @ $245.10</td>
+                      <td className="p-3 text-center">2023-12-15</td>
+                      <td className="p-3 text-center">Buy</td>
+                      <td className="p-3 text-center font-medium">VTI</td>
+                      <td className="p-3 text-center">
+                        Bought 10 shares @ $245.10
+                      </td>
                       <td className="p-3 text-center text-red-500">
                         -$2,451.00
                       </td>
                     </tr>
                     <tr className="border-b hover:bg-muted/50">
-                      <td className="p-3">2023-12-10</td>
-                      <td className="p-3">Dividend</td>
-                      <td className="p-3 font-medium">MSFT</td>
-                      <td className="p-3">Quarterly dividend</td>
+                      <td className="p-3 text-center">2023-12-10</td>
+                      <td className="p-3 text-center">Dividend</td>
+                      <td className="p-3 text-center font-medium">MSFT</td>
+                      <td className="p-3 text-center">Quarterly dividend</td>
                       <td className="p-3 text-center text-green-500">
                         +$35.10
                       </td>
                     </tr>
                     <tr className="border-b hover:bg-muted/50">
-                      <td className="p-3">2023-12-05</td>
-                      <td className="p-3">Sell</td>
-                      <td className="p-3 font-medium">AAPL</td>
-                      <td className="p-3">Sold 5 shares @ $185.75</td>
+                      <td className="p-3 text-center">2023-12-05</td>
+                      <td className="p-3 text-center">Sell</td>
+                      <td className="p-3 text-center font-medium">AAPL</td>
+                      <td className="p-3 text-center">
+                        Sold 5 shares @ $185.75
+                      </td>
                       <td className="p-3 text-center text-green-500">
                         +$928.75
                       </td>
