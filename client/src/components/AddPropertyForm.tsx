@@ -100,7 +100,7 @@ export function AddPropertyForm({
       bathrooms: savedProperty.bath,
       squareFootage: savedProperty.squareFootage,
       yearBuilt: savedProperty.yearBuilt,
-      lastSaleDate: savedProperty.lastSale,
+      lastSale: savedProperty.lastSale,
       lastSalePrice: savedProperty.lastSalePrice,
       estimatedValue: savedProperty.estimatedValue,
       estimatedRangeLow: savedProperty.estimatedRangeLow,
