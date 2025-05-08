@@ -34,29 +34,42 @@ CREATE TABLE "properties" (
 );
 
 
-CREATE TABLE "transactions" (
-  "transactionId" serial PRIMARY KEY,
-  "userId" integer REFERENCES "users" ("userId"),
-  "date" integer,
-  "description" text,
-  "category" text,
-  "amount" integer
-);
+-- CREATE TABLE "transactions" (
+--   "transactionId" serial PRIMARY KEY,
+--   "userId" integer REFERENCES "users" ("userId"),
+--   "date" integer,
+--   "description" text,
+--   "category" text,
+--   "amount" integer
+-- );
 
 CREATE TABLE "holdings" (
-  "holdingId" serial PRIMARY KEY,
-  "userId" integer REFERENCES "users" ("userId"),
-  "shares" integer,
-  "symbol" text,
-  "sector" text
+  "holding_id" SERIAL PRIMARY KEY,
+  "user_id" INTEGER REFERENCES "users"("userId"),
+  "account_number" TEXT NOT NULL,
+  "investment_name" TEXT NOT NULL,
+  "symbol" TEXT NOT NULL,
+  "shares" NUMERIC NOT NULL,
+  "share_price" NUMERIC NOT NULL,
+  "total_value" NUMERIC NOT NULL,
+  "upload_account_type" TEXT
 );
 
-CREATE TABLE "insights" (
-  "insightsId" serial PRIMARY KEY,
-  "userId" integer REFERENCES "users" ("userId"),
-  "goals" text,
-  "health" integer,
-  "ageGroupCompare" integer,
-  "spendingAlert" text,
-  "savingsRate" text
+CREATE TABLE "transactions" (
+  "transaction_id" SERIAL PRIMARY KEY,
+  "user_id" INTEGER REFERENCES "users"("userId"),
+  "account_number" TEXT NOT NULL,
+  "trade_date" DATE NOT NULL,
+  "settlement_date" DATE NOT NULL,
+  "transaction_type" TEXT NOT NULL,
+  "transaction_description" TEXT,
+  "investment_name" TEXT NOT NULL,
+  "symbol" TEXT NOT NULL,
+  "shares" NUMERIC NOT NULL,
+  "share_price" NUMERIC NOT NULL,
+  "principal_amount" NUMERIC NOT NULL,
+  "fees" NUMERIC NOT NULL,
+  "net_amount" NUMERIC NOT NULL,
+  "accrued_interest" NUMERIC NOT NULL,
+  "account_type" TEXT NOT NULL
 );

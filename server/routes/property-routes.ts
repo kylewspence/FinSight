@@ -1,4 +1,4 @@
-import { ClientError, authMiddleware } from './lib/index.js';
+import { ClientError, authMiddleware } from '../lib/index.js';
 import express from 'express';
 import pg from 'pg';
 
