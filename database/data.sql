@@ -1,14 +1,3 @@
--- Use SQL insert statements to add any
--- starting/dummy data to your database tables
-
--- EXAMPLE:
-
---  insert into "todos"
---    ("task", "isCompleted")
---    values
---      ('Learn to code', false),
---      ('Build projects', false),
---      ('Get a job', false);
 
 
 INSERT INTO "users" ("userId", "userName", "hashedPassword")
@@ -62,4 +51,4 @@ VALUES (
     'https://maps.googleapis.com/maps/api/streetview?size=600x400&location=23100%20W%20Papago%20St,%20Buckeye,%20AZ%2085326&key=AIzaSyA89BdPRdEMhtWENaL6m3-Wmmkbggl6XRk'
   ),
   (1, '24475 W Atlanta Ave, Buckeye, AZ 85326', 371000, 355000, 0, 'Single Family', 3, 3, 1551, 2017, '2022-01-12T00:00:00.000Z', 364900, 0, 0, 100, 1800, 0.00, NULL, 'https://maps.googleapis.com/maps/api/streetview?size=600x400&location=24475%20W%20Atlanta%20Ave,%20Buckeye,%20AZ%2085326&key=AIzaSyA89BdPRdEMhtWENaL6m3-Wmmkbggl6XRk'),
-(1, '23973 W Hidalgo Ave, Buckeye, AZ 85326', 375000, 354000, 0, 'Single Family', 4, 3, 1569, 2008, '2018-09-25T00:00:00.000Z', 191000, 0, 0, 100, 1800, 0.00, 'Test', 'https://maps.googleapis.com/maps/api/streetview?size=600x400&location=23973%20W%20Hidalgo%20Ave,%20Buckeye,%20AZ%2085326&key=AIzaSyA89BdPRdEMhtWENaL6m3-Wmmkbggl6XRk'),
+(1, '23973 W Hidalgo Ave, Buckeye, AZ 85326', 375000, 354000, 0, 'Single Family', 4, 3, 1569, 2008, '2018-09-25T00:00:00.000Z', 191000, 0, 0, 100, 1800, 0.00, 'Test', 'https://maps.googleapis.com/maps/api/streetview?size=600x400&location=23973%20W%20Hidalgo%20Ave,%20Buckeye,%20AZ%2085326&key=AIzaSyA89BdPRdEMhtWENaL6m3-Wmmkbggl6XRk');
