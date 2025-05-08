@@ -1,7 +1,7 @@
 // client/src/components/OverviewTab.tsx
 import { useMemo } from 'react';
 import { PropertyType } from '@/types/PropertyTypes';
-import { formatCurrency } from '@/lib/utils';
+import { formatCurrency, formatCurrencyShort } from '@/lib/utils';
 import { Cell, Pie } from 'recharts';
 import { Legend, PieChart } from 'recharts';
 import { Tooltip } from 'recharts';
@@ -128,23 +128,23 @@ export default function OverviewTab({ properties = [] }: OverviewTabProps) {
               Monthly Mortgage Payments
             </div>
             <div className="text-xl font-bold">
-              {formatCurrency(totals.mortgageExpenses)}
+              {formatCurrencyShort(totals.mortgageExpenses)}
             </div>
             <div className="text-sm text-muted-foreground">Monthly Rent</div>
             <div className="text-xl font-bold">
-              {formatCurrency(totals.monthlyRent)}
+              {formatCurrencyShort(totals.monthlyRent)}
             </div>
             <div className="text-sm text-muted-foreground">
               Monthly HOA Payments
             </div>
             <div className="text-xl font-bold">
-              {formatCurrency(totals.hoaExpenses)}
+              {formatCurrencyShort(totals.hoaExpenses)}
             </div>
             <div className="text-sm text-muted-foreground">
               Investment Income
             </div>
             <div className="text-xl font-bold">
-              {formatCurrency(totals.investmentIncome)}
+              {formatCurrencyShort(totals.investmentIncome)}
             </div>
           </div>
           <div className="border-t pt-1 bg-muted/10 rounded-b-lg">
@@ -163,7 +163,7 @@ export default function OverviewTab({ properties = [] }: OverviewTabProps) {
         </Card>
       </div>
 
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid md:grid-cols-3 sm:grid-cols-1 gap-6">
         <Card className="p-4">
           <h3 className="font-medium text-md mb-2">Top Performing Property</h3>
           {totals.topPerformer ? (
@@ -195,7 +195,7 @@ export default function OverviewTab({ properties = [] }: OverviewTabProps) {
 
         <Card className="p-4">
           <h3 className="font-medium text-md">Upcoming Tasks:</h3>
-          <ScrollArea className="h-36">
+          <ScrollArea className="h-36 sm:h-60 md:h-48 ">
             <div className="space-y-3 pr-3">
               {upcomingTasks.map((task) => (
                 <div
