@@ -30,11 +30,10 @@ CREATE TABLE "properties" (
   "mortgagePayment" integer,
   "mortgageBalance" integer,
   "hoaPayment" integer,
-  "interestRate" integer,
+  "interestRate" numeric,
   "imageUrl" text,
   "monthlyRent" integer,
-  "notes" text,
-  "interestRate" integer
+  "notes" text
 );
 
 
