@@ -15,8 +15,6 @@ INSERT INTO "users" ("userId", "userName", "hashedPassword")
 VALUES
   (1, 'kdubs1', '$argon2id$v=19$m=65536,t=3,p=4$hJZ+bXoGbVpKLDy/OBtaTg$lpDtMvEx+Im5T5BzwbELTnHFwif8wiEzha6cy5flMLc');
 
-INSERT INTO properties (id, user_id, address, image_url)
-
 INSERT INTO properties (
   "userId", "formattedAddress", "estimatedValue", "estimatedRangeLow", "estimatedRangeHigh",
   "type", "beds", "bath", "squareFootage", "yearBuilt", "lastSale", "lastSalePrice",
