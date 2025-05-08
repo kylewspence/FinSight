@@ -173,10 +173,7 @@ export default function PropertiesTab() {
   // Transform properties into card data
   const cardsData = properties.map((property) => ({
     id: property.id,
-    category: property.propertyType,
     title: property.formattedAddress,
-    subtitle: `${property.bedrooms} bed, ${property.bathrooms} bath`,
-    squareFootage: property.squareFootage,
     src: property.image || '',
     content: (
       <PropertyModal
@@ -197,7 +194,7 @@ export default function PropertiesTab() {
 
   return (
     <div className="w-full h-full pb-10">
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">My Properties</h2>
 
         {showAddForm ? (
