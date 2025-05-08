@@ -74,7 +74,7 @@ export default function PropertiesTab() {
             estimatedRangeHigh:
               prop.estimatedValue + prop.estimatedValue * 0.04,
             monthlyRent: prop.monthlyRent || 0,
-            image: getStreetViewImage(prop.formattedAddress),
+            image: prop.imageUrl || getStreetViewImage(prop.formattedAddress),
             notes: prop.notes || '',
             mortgagePayment: prop.mortgagePayment || 0,
             mortgageBalance: prop.mortgageBalance || 0,

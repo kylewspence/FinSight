@@ -31,7 +31,7 @@ export function getStreetViewImage(address: string): string {
 
   if (!apiKey) {
     console.warn('No Google Maps API key found in environment variables');
-    return 'https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?q=80&w=2070&auto=format&fit=crop';
+    return '';
   }
 
   return `https://maps.googleapis.com/maps/api/streetview?size=${size}&location=${formattedAddress}&key=${apiKey}`;
