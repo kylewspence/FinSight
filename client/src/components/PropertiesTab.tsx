@@ -23,6 +23,9 @@ interface DbProperty {
   estimatedValue: number;
   estimatedRangeLow: number;
   estimatedRangeHigh: number;
+  imageUrl?: string;
+  notes?: string;
+  monthlyRent?: number;
 }
 
 export default function PropertiesTab() {
@@ -62,13 +65,14 @@ export default function PropertiesTab() {
             squareFootage: prop.squareFootage,
             yearBuilt: prop.yearBuilt,
             lastSaleDate: prop.lastSale,
-            lastSalePrice: 0, // Not in your schema
+            lastSalePrice: prop.lastSalePrice,
             estimatedValue: prop.estimatedValue,
             estimatedRangeLow: prop.estimatedRangeLow,
             estimatedRangeHigh:
               prop.estimatedValue + prop.estimatedValue * 0.05, // Estimate
-            monthlyRent: 0, // Not in your schema
+            monthlyRent: prop.monthlyRent || 0,
             image: getStreetViewImage(prop.address),
+            notes: prop.notes || '',
           })
         );
 
@@ -82,7 +86,7 @@ export default function PropertiesTab() {
   }, [user]);
 
   // Handle adding a new property
-  const handlePropertyAdded = (newProperty: PropertyType) => {
+  function handlePropertyAdded(newProperty: PropertyType) {
     if (!newProperty.image && newProperty.address) {
       // If the property doesn't have an image yet but has an address
       const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
@@ -90,15 +94,70 @@ export default function PropertiesTab() {
         newProperty.address
       )}&key=${apiKey}`;
     }
-
     setProperties([...properties, newProperty]);
     setShowAddForm(false);
+  }
 
-    // Force a re-render
-    setTimeout(() => {
-      window.scrollTo({ top: window.scrollY + 1, behavior: 'smooth' });
-    }, 100);
-  };
+  async function handlePropertyUpdate(updatedProperty: PropertyType) {
+    try {
+      const token = readToken();
+      if (!token) {
+        throw new Error('No token found');
+      }
+
+      const response = await fetch(`/api/properties/${updatedProperty.id}`, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          monthlyRent: updatedProperty.monthlyRent || 0,
+          notes: updatedProperty.notes || '',
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Error updating property:', errorData);
+        throw new Error('Failed to update property');
+      }
+
+      // Update local state with updated property
+      setProperties((prevProperties) =>
+        prevProperties.map((prop) =>
+          prop.id === updatedProperty.id ? updatedProperty : prop
+        )
+      );
+    } catch (error) {
+      console.error('Error updating property:', error);
+      alert('Failed to update property.');
+    }
+  }
+
+  async function handlePropertyDelete(propertyId: number) {
+    try {
+      const token = readToken();
+      if (!token) throw new Error('No token found');
+
+      const response = await fetch(`/api/properties/${propertyId}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete property');
+      }
+
+      // Remove the property from local state
+      setProperties((prev) => prev.filter((p) => p.id !== propertyId));
+    } catch (error) {
+      alert('Failed to delete property.');
+      console.error(error);
+    }
+  }
 
   // Transform properties into card data
   const cardsData = properties.map((property) => ({
@@ -107,7 +166,16 @@ export default function PropertiesTab() {
     title: property.address,
     subtitle: `${property.bedrooms} bed, ${property.bathrooms} bath`,
     src: property.image || '',
-    content: <PropertyModal property={property} />,
+    content: (
+      <PropertyModal
+        property={property}
+        onUpdate={handlePropertyUpdate}
+        onClose={() => {
+          setProperties;
+        }}
+        onDelete={handlePropertyDelete}
+      />
+    ),
   }));
 
   // Create carousel cards

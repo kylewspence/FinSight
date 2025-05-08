@@ -17,4 +17,5 @@ export interface PropertyType {
   price?: number; // For compatibility with RentCast API
   monthlyRent?: number;
   image?: string;
+  notes: string;
 }
