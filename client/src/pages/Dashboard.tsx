@@ -2,8 +2,29 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import OverviewTab from '@/components/OverviewTab';
 import InvestmentsTab from '@/components/InvestmentsTab';
 import PropertiesTab from '@/components/PropertiesTab';
+import { readToken } from '@/lib/data';
+import { useEffect } from 'react';
+import { useState } from 'react';
+import { PropertyType } from '@/types/PropertyTypes';
+import InsightsTab from '@/components/InsightsTab';
 
 export default function Dashboard() {
+  const [properties, setProperties] = useState<PropertyType[]>([]);
+
+  useEffect(() => {
+    async function loadProperties() {
+      const token = readToken();
+      if (!token) return;
+      const response = await fetch('/api/properties', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setProperties(data);
+      }
+    }
+    loadProperties();
+  }, []);
   return (
     <div className="flex flex-col gap-4">
       {/* <h1 className="text-3xl font-bold">Financial Overview</h1> */}
@@ -17,7 +38,7 @@ export default function Dashboard() {
         </TabsList>
 
         <TabsContent value="overview" className="w-full">
-          <OverviewTab />
+          <OverviewTab properties={properties} />
         </TabsContent>
 
         <TabsContent value="properties">
@@ -28,8 +49,8 @@ export default function Dashboard() {
           <InvestmentsTab />
         </TabsContent>
 
-        <TabsContent value="AI Insights">
-          <p>AI Insights will be displayed here</p>
+        <TabsContent value="insights">
+          <InsightsTab />
         </TabsContent>
       </Tabs>
     </div>

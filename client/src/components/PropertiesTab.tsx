@@ -12,7 +12,7 @@ import { getStreetViewImage } from '@/lib/utils';
 
 interface DbProperty {
   propertyId: number;
-  address: string;
+  formattedAddress: string;
   type: string;
   beds: number;
   bath: number;
@@ -26,6 +26,10 @@ interface DbProperty {
   imageUrl?: string;
   notes?: string;
   monthlyRent?: number;
+  mortgagePayment?: number;
+  mortgageBalance?: number;
+  hoaPayment?: number;
+  interestRate?: number;
 }
 
 export default function PropertiesTab() {
@@ -57,8 +61,7 @@ export default function PropertiesTab() {
         const formattedProperties: PropertyType[] = dbProperties.map(
           (prop: DbProperty) => ({
             id: prop.propertyId,
-            address: prop.address,
-            formattedAddress: prop.address,
+            formattedAddress: prop.formattedAddress,
             propertyType: prop.type,
             bedrooms: prop.beds,
             bathrooms: prop.bath,
@@ -69,10 +72,14 @@ export default function PropertiesTab() {
             estimatedValue: prop.estimatedValue,
             estimatedRangeLow: prop.estimatedRangeLow,
             estimatedRangeHigh:
-              prop.estimatedValue + prop.estimatedValue * 0.05, // Estimate
+              prop.estimatedValue + prop.estimatedValue * 0.04,
             monthlyRent: prop.monthlyRent || 0,
-            image: getStreetViewImage(prop.address),
+            image: getStreetViewImage(prop.formattedAddress),
             notes: prop.notes || '',
+            mortgagePayment: prop.mortgagePayment || 0,
+            mortgageBalance: prop.mortgageBalance || 0,
+            hoaPayment: prop.hoaPayment || 0,
+            interestRate: prop.interestRate || 0,
           })
         );
 
@@ -87,11 +94,11 @@ export default function PropertiesTab() {
 
   // Handle adding a new property
   function handlePropertyAdded(newProperty: PropertyType) {
-    if (!newProperty.image && newProperty.address) {
+    if (!newProperty.image && newProperty.formattedAddress) {
       // If the property doesn't have an image yet but has an address
       const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
       newProperty.image = `https://maps.googleapis.com/maps/api/streetview?size=600x400&location=${encodeURIComponent(
-        newProperty.address
+        newProperty.formattedAddress
       )}&key=${apiKey}`;
     }
     setProperties([...properties, newProperty]);
@@ -114,6 +121,10 @@ export default function PropertiesTab() {
         body: JSON.stringify({
           monthlyRent: updatedProperty.monthlyRent || 0,
           notes: updatedProperty.notes || '',
+          mortgageBalance: updatedProperty.mortgageBalance || 0,
+          mortgagePayment: updatedProperty.mortgagePayment || 0,
+          interestRate: updatedProperty.interestRate || 0,
+          hoaPayment: updatedProperty.hoaPayment || 0,
         }),
       });
 
@@ -162,9 +173,7 @@ export default function PropertiesTab() {
   // Transform properties into card data
   const cardsData = properties.map((property) => ({
     id: property.id,
-    category: property.propertyType,
-    title: property.address,
-    subtitle: `${property.bedrooms} bed, ${property.bathrooms} bath`,
+    title: property.formattedAddress,
     src: property.image || '',
     content: (
       <PropertyModal
@@ -185,7 +194,7 @@ export default function PropertiesTab() {
 
   return (
     <div className="w-full h-full pb-10">
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">My Properties</h2>
 
         {showAddForm ? (
