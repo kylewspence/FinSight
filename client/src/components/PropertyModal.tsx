@@ -257,7 +257,7 @@ export function PropertyModal({
         <div className="grid gap-1">
           <div className="text-sm font-medium">Last Sale</div>
           <div className="text-sm">
-            {new Date(property.lastSaleDate).toLocaleDateString()} •{' '}
+            {new Date(property.lastSale).toLocaleDateString()} •{' '}
             {formatCurrency(property.lastSalePrice)}
           </div>
         </div>
