@@ -113,9 +113,15 @@ router.post('/', authMiddleware, async (req, res, next) => {
     }
 
     const apiKey = process.env.GOOGLE_MAPS_API_KEY;
-    const imageUrl = `https://maps.googleapis.com/maps/api/streetview?size=600x400&location=${encodeURIComponent(
-      formattedAddress
-    )}&key=${apiKey}`;
+    let imageUrl = '';
+
+    if (apiKey) {
+      imageUrl = `https://maps.googleapis.com/maps/api/streetview?size=600x400&location=${encodeURIComponent(
+        formattedAddress
+      )}&key=${apiKey}`;
+    } else {
+      console.warn('No Google Maps API key configured for property images');
+    }
 
     const sql = `
         INSERT into "properties" 

@@ -30,18 +30,10 @@ CREATE TABLE "properties" (
   "mortgagePayment" integer,
   "mortgageBalance" integer,
   "hoaPayment" integer,
-  "interestRate" integer
+  "interestRate" integer,
+  "imageUrl" text
 );
 
-
--- CREATE TABLE "transactions" (
---   "transactionId" serial PRIMARY KEY,
---   "userId" integer REFERENCES "users" ("userId"),
---   "date" integer,
---   "description" text,
---   "category" text,
---   "amount" integer
--- );
 
 CREATE TABLE "holdings" (
   "holding_id" SERIAL PRIMARY KEY,
