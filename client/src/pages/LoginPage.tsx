@@ -55,6 +55,38 @@ export default function LoginForm({
     }
   }
 
+  async function handleGuestLogin() {
+    try {
+      setIsLoading(true);
+
+      // Guest credentials for user with userId 1
+      const guestData = {
+        userName: 'kdubs1',
+        password: 'kdubs1',
+      };
+
+      const req = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(guestData),
+      };
+      const res = await fetch('/api/auth/login', req);
+      if (!res.ok) {
+        throw new Error(`fetch Error ${res.status}`);
+      }
+
+      const { user, token } = (await res.json()) as AuthData;
+
+      handleSignIn(user, token);
+
+      navigate('/dashboard');
+    } catch (err) {
+      alert(`Error signing in as guest: ${err}`);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
       <Card>
@@ -91,6 +123,13 @@ export default function LoginForm({
               </div>
               <Button disabled={isLoading} type="submit" className="w-full">
                 Login
+              </Button>
+              <Button
+                disabled={isLoading}
+                onClick={handleGuestLogin}
+                variant="outline"
+                className="w-full">
+                Login as Guest
               </Button>
             </div>
             <div className="mt-4 text-center text-sm">
