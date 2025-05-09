@@ -10,6 +10,10 @@ import { readToken } from '@/lib/data';
 import { useUser } from './useUser';
 import { getStreetViewImage } from '@/lib/utils';
 
+// TODO: This is a temporary type for the properties tab.
+// This defines the shape of property data as it comes from the database with
+// database specific field names.
+// Working on refactoring this to use the PropertyType interface.
 interface DbProperty {
   propertyId: number;
   formattedAddress: string;
@@ -33,18 +37,21 @@ interface DbProperty {
 }
 
 export default function PropertiesTab() {
-  const { user } = useUser();
-  const [properties, setProperties] = useState<PropertyType[]>([]);
-  const [showAddForm, setShowAddForm] = useState(false);
+  const { user } = useUser(); // Get the user from the context
+  const [properties, setProperties] = useState<PropertyType[]>([]); // State to store properties
+  const [showAddForm, setShowAddForm] = useState(false); // State to show the add form
 
+  // Load the properties from the database
   useEffect(() => {
     async function loadProperties() {
       try {
+        // Read the login token from the local storage
         const token = readToken();
         if (!token) {
           return; // Not logged in
         }
 
+        // Fetch the properties from the database based on the user's id
         const response = await fetch('/api/properties', {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -83,30 +90,32 @@ export default function PropertiesTab() {
           })
         );
 
-        setProperties(formattedProperties);
+        setProperties(formattedProperties); // Set the properties in the state
       } catch (err) {
         console.error('Error loading properties:', err);
       }
     }
 
-    loadProperties();
+    loadProperties(); // Load the properties
   }, [user]);
 
   // Handle adding a new property
   function handlePropertyAdded(newProperty: PropertyType) {
     if (!newProperty.image && newProperty.formattedAddress) {
-      // If the property doesn't have an image yet but has an address
+      // If the property doesn't have an image yet but has an address, get the street view image
+      // from Google Maps API - function in utils.ts
       const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
       newProperty.image = `https://maps.googleapis.com/maps/api/streetview?size=600x400&location=${encodeURIComponent(
         newProperty.formattedAddress
       )}&key=${apiKey}`;
     }
-    setProperties([...properties, newProperty]);
-    setShowAddForm(false);
+    setProperties([...properties, newProperty]); // copies the existing properties and adds the new one
+    setShowAddForm(false); // close the add form
   }
 
   async function handlePropertyUpdate(updatedProperty: PropertyType) {
     try {
+      // Read the login token from the local storage
       const token = readToken();
       if (!token) {
         throw new Error('No token found');
@@ -119,6 +128,7 @@ export default function PropertiesTab() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          // Send the updated property fields to the database
           monthlyRent: updatedProperty.monthlyRent || 0,
           notes: updatedProperty.notes || '',
           mortgageBalance: updatedProperty.mortgageBalance || 0,
@@ -129,13 +139,15 @@ export default function PropertiesTab() {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        console.error('Error updating property:', errorData);
-        throw new Error('Failed to update property');
+        // error handling if the property is not updated
+        const errorData = await response.json(); // get the error data
+        console.error('Error updating property:', errorData); // log the error
+        throw new Error('Failed to update property'); // throw an error
       }
 
       // Update local state with updated property
       setProperties((prevProperties) =>
+        // takes prev properties and updates the one that matches the updated propertyId
         prevProperties.map((prop) =>
           prop.id === updatedProperty.id ? updatedProperty : prop
         )
@@ -146,8 +158,10 @@ export default function PropertiesTab() {
     }
   }
 
+  // Handle deleting a property
   async function handlePropertyDelete(propertyId: number) {
     try {
+      // Read the login token from the local storage
       const token = readToken();
       if (!token) throw new Error('No token found');
 
@@ -176,6 +190,7 @@ export default function PropertiesTab() {
     title: property.formattedAddress,
     src: property.image || '',
     content: (
+      // Render the property modal
       <PropertyModal
         property={property}
         onUpdate={handlePropertyUpdate}
@@ -187,7 +202,8 @@ export default function PropertiesTab() {
     ),
   }));
 
-  // Create carousel cards
+  // Create carousel cards - Carousel component comes with static dummy data.
+  // This is where we would add the dynamic data from the database and pass it to the carousel component.
   const cards = cardsData.map((card, index) => (
     <Card key={card.id} card={card} index={index} />
   ));
