@@ -11,7 +11,7 @@ interface PropertyDetailsProps {
     bathrooms: number;
     squareFootage: number;
     yearBuilt: number;
-    lastSaleDate: string;
+    lastSale: string;
     lastSalePrice: number;
     estimatedValue: number;
     estimatedRangeLow: number;

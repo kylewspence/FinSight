@@ -21,11 +21,11 @@ interface PropertyData {
   bathrooms: number;
   squareFootage: number;
   yearBuilt: number;
-  lastSaleDate: string;
+  lastSale: string;
   lastSalePrice: number;
-  estimatedValue: number;
-  estimatedRangeLow: number;
-  estimatedRangeHigh: number;
+  price: number;
+  priceRangeLow: number;
+  priceRangeHigh: number;
 }
 
 function formatAddressForTab(address: string) {
@@ -55,9 +55,9 @@ export function PropertyList() {
       // Update the estimated range values using the correct data structure
       const propertyWithRange = {
         ...data,
-        estimatedValue: data.estimatedValue || 0,
-        estimatedRangeLow: data.priceRangeLow || 0,
-        estimatedRangeHigh: data.price || 0
+        price: data.price || 0,
+        priceRangeLow: data.priceRangeLow || 0,
+        priceRangeHigh: data.priceRangeHigh || 0
       };
       
       setProperties(prev => ({
