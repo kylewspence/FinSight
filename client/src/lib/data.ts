@@ -59,6 +59,10 @@ export async function updateProperty(
   const token = readToken();
   if (!token) throw new Error('No token found');
 
+  if (!updatedProperty.id) {
+    throw new Error('Property ID is required for updates');
+  }
+
   const response = await fetch(`/api/properties/${updatedProperty.id}`, {
     method: 'PUT',
     headers: {
@@ -78,11 +82,11 @@ export async function updateProperty(
   if (!response.ok) throw new Error('Failed to update property');
 }
 
-export async function deleteProperty(propertyId: number): Promise<void> {
+export async function deleteProperty(id: number): Promise<void> {
   const token = readToken();
   if (!token) throw new Error('No token found');
 
-  const response = await fetch(`/api/properties/${propertyId}`, {
+  const response = await fetch(`/api/properties/${id}`, {
     method: 'DELETE',
     headers: { Authorization: `Bearer ${token}` },
   });

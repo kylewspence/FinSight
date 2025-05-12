@@ -10,7 +10,7 @@ import { Textarea } from './ui/textarea';
 interface PropertyModalProps {
   property: PropertyType;
   onUpdate: (updatedProperty: PropertyType) => void;
-  onDelete: (propertyId: number) => Promise<void>;
+  onDelete: (id: number) => Promise<void>;
 }
 
 export function PropertyModal({

@@ -53,11 +53,11 @@ export function PropertiesTab() {
     }
   }
 
-  async function handlePropertyDelete(propertyId: number) {
+  async function handlePropertyDelete(id: number) {
     try {
-      await deleteProperty(propertyId);
+      await deleteProperty(id);
       // Remove the property from local state
-      setProperties((prev) => prev.filter((p) => p.id !== propertyId));
+      setProperties((prev) => prev.filter((p) => p.id !== id));
     } catch (err) {
       setError(
         err instanceof Error ? err.message : 'Failed to delete property'

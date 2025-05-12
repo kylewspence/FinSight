@@ -1,7 +1,7 @@
 // client/src/types/PropertyTypes.ts
 export interface PropertyType {
   // Core identifiers
-  id: number; // From PropertyType (equivalent to propertyId)
+  id: number;
 
   // Location and property details
   formattedAddress: string; // From both
