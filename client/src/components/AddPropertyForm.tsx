@@ -56,12 +56,11 @@ export function AddPropertyForm({
     //Format data for database
     const dataToSend = {
       formattedAddress: propertyData.formattedAddress,
-      price : propertyData.price || 0,
-      priceRangeLow:
-        propertyData.priceRangeLow || 0,
-      type: propertyData.propertyType || 'Single Family',
-      beds: propertyData.bedrooms?.toString() || '0',
-      bath: propertyData.bathrooms?.toString() || '0',
+      price: propertyData.price || 0,
+      priceRangeLow: propertyData.priceRangeLow || 0,
+      propertyType: propertyData.propertyType || 'Single Family',
+      bedrooms: propertyData.bedrooms?.toString() || '0',
+      bathrooms: propertyData.bathrooms?.toString() || '0',
       squareFootage: propertyData.squareFootage || 0,
       yearBuilt: propertyData.yearBuilt || 0,
       lastSale: propertyData.lastSale || '',
@@ -93,19 +92,8 @@ export function AddPropertyForm({
 
     // Transform the database response to match PropertyType
     return {
-      id: savedProperty.id,
-      formattedAddress: savedProperty.formattedAddress,
-      propertyType: savedProperty.type,
-      bedrooms: savedProperty.beds,
-      bathrooms: savedProperty.bath,
-      squareFootage: savedProperty.squareFootage,
-      yearBuilt: savedProperty.yearBuilt,
-      lastSale: savedProperty.lastSale,
-      lastSalePrice: savedProperty.lastSalePrice,
-      price: savedProperty.price,
-      priceRangeLow: savedProperty.priceRangeLow,
+      ...savedProperty,
       monthlyRent: 0,
-      image: savedProperty.image,
       notes: '',
       mortgagePayment: 0,
       mortgageBalance: 0,

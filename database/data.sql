@@ -6,7 +6,7 @@ VALUES
 
 INSERT INTO "properties" (
   "userId", "formattedAddress", "price" "priceRangeLow", "priceRangeHigh",
-  "type", "beds", "bath", "squareFootage", "yearBuilt", "lastSale", "lastSalePrice",
+  "propertyType", "bedrooms", "bathrooms", "squareFootage", "yearBuilt", "lastSale", "lastSalePrice",
   "mortgagePayment", "mortgageBalance", "hoaPayment", "monthlyRent", "interestRate",
   "notes", "image"
 )

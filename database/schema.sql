@@ -14,15 +14,15 @@ CREATE TABLE "users" (
 );
 
 CREATE TABLE "properties" (
-  "propertyId" serial PRIMARY KEY,
+  "id" serial PRIMARY KEY,
   "userId" integer REFERENCES "users" ("userId"),
   "formattedAddress" text,
   "price" integer,
   "priceRangeLow" integer,
   "priceRangeHigh" integer,
-  "type" text,
-  "beds" integer,
-  "bath" numeric,
+  "propertyType" text,
+  "bedrooms" integer,
+  "bathrooms" numeric,
   "squareFootage" integer,
   "lastSale" text,
   "lastSalePrice" integer,

@@ -37,6 +37,7 @@ import {
   accountsData,
   holdingsData,
 } from '@/lib/mockData';
+
 export default function InvestmentsTab() {
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const startPortfolio = performanceData[0].portfolio;
@@ -54,8 +55,6 @@ export default function InvestmentsTab() {
     // Close the modal
     setIsUploadModalOpen(false);
     alert('File uploaded successfully!');
-
-    // Optionally reload the holdings data
   }
 
   return (

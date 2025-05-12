@@ -21,7 +21,7 @@ interface OverviewTabProps {
   properties: PropertyType[];
 }
 
-export default function OverviewTab({ properties = [] }: OverviewTabProps) {
+export function OverviewTab({ properties = [] }: OverviewTabProps) {
   // Calculate totals using useMemo for performance
   const totals = useMemo(() => {
     let realEstateAssets = 0;
@@ -175,8 +175,7 @@ export default function OverviewTab({ properties = [] }: OverviewTabProps) {
                 Purchased: {formatCurrency(totals.topPerformer.lastSalePrice)}
               </p>
               <p className="text-sm text-muted-foreground">
-                Current value:{' '}
-                {formatCurrency(totals.topPerformer.price || 0)}
+                Current value: {formatCurrency(totals.topPerformer.price || 0)}
               </p>
               <p className="text-green-500 font-medium">
                 {totals.highestAppreciationPercent.toFixed(1)}% appreciation
@@ -258,3 +257,5 @@ export default function OverviewTab({ properties = [] }: OverviewTabProps) {
     </div>
   );
 }
+
+export default OverviewTab;

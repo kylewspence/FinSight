@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BarChart2, Target, Brain, TrendingUp } from 'lucide-react';
 
-const AIInsights = () => {
+export function AIInsights() {
   const [activeTab, setActiveTab] = useState('overview');
 
   return (
@@ -67,6 +67,6 @@ const AIInsights = () => {
       </Tabs>
     </div>
   );
-};
+}
 
 export default AIInsights;

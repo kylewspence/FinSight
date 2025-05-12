@@ -100,9 +100,9 @@ router.post('/', authMiddleware, async (req, res, next) => {
       price,
       priceRangeLow,
       priceRangeHigh,
-      type,
-      beds,
-      bath,
+      propertyType,
+      bedrooms,
+      bathrooms,
       squareFootage,
       yearBuilt,
       lastSale,
@@ -127,15 +127,15 @@ router.post('/', authMiddleware, async (req, res, next) => {
         INSERT into "properties" 
         ("userId",  
         "formattedAddress",
-        "type",
-        "beds",
-        "bath",
+        "propertyType",
+        "bedrooms",
+        "bathrooms",
         "squareFootage",
         "yearBuilt",
         "lastSale",
         "lastSalePrice",
-        "image3")
-        values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+        "image")
+        values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
         RETURNING *;
         `;
 
@@ -145,9 +145,9 @@ router.post('/', authMiddleware, async (req, res, next) => {
       Math.round(price) || 0,
       Math.round(priceRangeLow) || 0,
       Math.round(priceRangeHigh) || 0,
-      type || 'Single Family',
-      beds || 0,
-      bath || 0,
+      propertyType || 'Single Family',
+      bedrooms || 0,
+      bathrooms || 0,
       Math.round(squareFootage) || 0,
       Math.round(yearBuilt) || 0,
       lastSale || '',
