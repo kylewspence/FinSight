@@ -23,7 +23,9 @@ FinSight centralizes your real estate data into one clean, intuitive platform—
 - **Backend:** Node.js, Express.js
 - **Database:** PostgreSQL
 - **APIs Used:**  
-  - Google Maps Street View (for dynamic property imagery)
+  - **Google Maps Street View:** Dynamically displays property images based on address  
+  - **RentCast:** Provides real-time property valuations, rental estimates, and historical trends  
+  - **OpenAI:** (In development) Will power conversational insights, smart financial analysis, and personalized recommendations across your portfolio  
 
 ---
 
