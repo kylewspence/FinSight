@@ -67,3 +67,14 @@ CREATE TABLE "transactions" (
   "accrued_interest" NUMERIC NOT NULL,
   "account_type" TEXT NOT NULL
 );
+
+CREATE TABLE "insights" (
+  "insightId" serial PRIMARY KEY,
+  "userId" integer NOT NULL REFERENCES "users"("userId") ON DELETE CASCADE,
+  "overview" text NOT NULL,
+  "timelineToPurchase" text NOT NULL,
+  "marketTrends" text NOT NULL,
+  "peerStrategies" text NOT NULL,
+  "createdAt" timestamp with time zone DEFAULT now(),
+  "updatedAt" timestamp with time zone DEFAULT now()
+);
