@@ -31,10 +31,12 @@ export function PropertiesTab({
       onPropertyAdd(newProperty);
     }
     setShowAddForm(false);
+
   }
   // Handle updating a property
   async function handlePropertyUpdate(updatedProperty: PropertyType) {
     try {
+
       setIsLoading(true);
       await updateProperty(updatedProperty);
 
@@ -45,11 +47,13 @@ export function PropertiesTab({
     } catch (err) {
       setError(
         err instanceof Error ? err.message : 'Failed to update property'
+
       );
     } finally {
       setIsLoading(false);
     }
   }
+
   // Handle deleting a property
   async function handlePropertyDelete(id: number) {
     try {
@@ -91,6 +95,7 @@ export function PropertiesTab({
     title: property.formattedAddress,
     src: property.image || '',
     content: (
+      // Render the property modal
       <PropertyModal
         property={property}
         onUpdate={handlePropertyUpdate}
@@ -99,7 +104,8 @@ export function PropertiesTab({
     ),
   }));
 
-  // Create carousel cards
+  // Create carousel cards - Carousel component comes with static dummy data.
+  // This is where we would add the dynamic data from the database and pass it to the carousel component.
   const cards = cardsData.map((card, index) => (
     <Card key={card.id} card={card} index={index} />
   ));
