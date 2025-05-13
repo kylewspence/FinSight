@@ -28,7 +28,7 @@ router.get('/', async (req, res, next) => {
     const sql = `
         SELECT * from "properties"
         WHERE "userId" = $1
-        ORDER by "propertyId"
+        ORDER by "id"
         `;
     const result = await db.query(sql, [userId]);
     console.log(`Found ${result.rows.length} properties for user ${userId}`);
@@ -42,39 +42,36 @@ router.get('/', async (req, res, next) => {
 });
 
 // GET a property by ID
-router.get('/property/:propertyId', async (req, res, next) => {
+router.get('/property/:id', async (req, res, next) => {
   try {
-    console.log(`GET /properties/property/${req.params.propertyId} requested`);
+    console.log(`GET /properties/property/${req.params.id} requested`);
 
     const userId = Number(req.user?.userId);
     if (!userId) {
       throw new ClientError(401, 'Authentication required');
     }
 
-    const propertyId = Number(req.params.propertyId);
-    if (!propertyId) {
-      console.warn(`Invalid propertyId provided: ${req.params.propertyId}`);
+    const id = Number(req.params.id);
+    if (!id) {
+      console.warn(`Invalid property Id provided: ${req.params.id}`);
 
-      throw new ClientError(400, 'propertyId is required');
+      throw new ClientError(400, 'property Id is required');
     }
 
     const sql = `
         SELECT * from "properties"
-        WHERE "propertyId" = $1 AND "userId" = $2
+        WHERE "id" = $1 AND "userId" = $2
         `;
-    const result = await db.query(sql, [propertyId, userId]);
-    console.log(`Found property with id ${propertyId}`);
+    const result = await db.query(sql, [id, userId]);
+    console.log(`Found property with id ${id}`);
     if (result.rows.length === 0) {
-      console.warn(`Property with id ${propertyId} not found`);
-      throw new ClientError(404, `Property with id ${propertyId} not found`);
+      console.warn(`Property with id ${id} not found`);
+      throw new ClientError(404, `Property with id ${id} not found`);
     }
 
     res.json(result.rows[0]);
   } catch (err) {
-    console.error(
-      `Error in GET /properties/property/${req.params.propertyId}:`,
-      err
-    );
+    console.error(`Error in GET /properties/property/${req.params.id}:`, err);
 
     next(err);
   }
@@ -97,12 +94,12 @@ router.post('/', authMiddleware, async (req, res, next) => {
 
     const {
       formattedAddress,
-      estimatedValue,
-      estimatedRangeLow,
-      estimatedRangeHigh,
-      type,
-      beds,
-      bath,
+      price,
+      priceRangeLow,
+      priceRangeHigh,
+      propertyType,
+      bedrooms,
+      bathrooms,
       squareFootage,
       yearBuilt,
       lastSale,
@@ -113,10 +110,10 @@ router.post('/', authMiddleware, async (req, res, next) => {
     }
 
     const apiKey = process.env.GOOGLE_MAPS_API_KEY;
-    let imageUrl = '';
+    let image = '';
 
     if (apiKey) {
-      imageUrl = `https://maps.googleapis.com/maps/api/streetview?size=600x400&location=${encodeURIComponent(
+      image = `https://maps.googleapis.com/maps/api/streetview?size=600x400&location=${encodeURIComponent(
         formattedAddress
       )}&key=${apiKey}`;
     } else {
@@ -125,19 +122,19 @@ router.post('/', authMiddleware, async (req, res, next) => {
 
     const sql = `
         INSERT into "properties" 
-        ("userId",  
+        ("userId", 
         "formattedAddress",
-        "estimatedValue",
-        "estimatedRangeLow",
-        "estimatedRangeHigh",
-        "type",
-        "beds",
-        "bath",
+        "price",
+        "priceRangeLow",
+        "priceRangeHigh",
+        "propertyType",
+        "bedrooms",
+        "bathrooms",
         "squareFootage",
         "yearBuilt",
         "lastSale",
         "lastSalePrice",
-        "imageUrl")
+        "image")
         values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
         RETURNING *;
         `;
@@ -145,17 +142,17 @@ router.post('/', authMiddleware, async (req, res, next) => {
     const params = [
       userId,
       formattedAddress,
-      Math.round(estimatedValue) || 0,
-      Math.round(estimatedRangeLow) || 0,
-      Math.round(estimatedRangeHigh) || 0,
-      type || 'Single Family',
-      beds || 0,
-      bath || 0,
+      Math.round(price) || 0,
+      Math.round(priceRangeLow) || 0,
+      Math.round(priceRangeHigh) || 0,
+      propertyType || 'Single Family',
+      bedrooms || 0,
+      bathrooms || 0,
       Math.round(squareFootage) || 0,
       Math.round(yearBuilt) || 0,
       lastSale || '',
       Math.round(lastSalePrice) || 0,
-      imageUrl,
+      image,
     ];
     console.log('Params:', params);
 
@@ -171,7 +168,7 @@ router.post('/', authMiddleware, async (req, res, next) => {
 });
 
 // PUT to update a property
-router.put('/:propertyId', async (req, res, next) => {
+router.put('/:id', async (req, res, next) => {
   try {
     console.log('Put Property Request params:', req.params);
     console.log('Put Property Request body:', req.body);
@@ -182,21 +179,18 @@ router.put('/:propertyId', async (req, res, next) => {
       throw new ClientError(401, 'Authentication required');
     }
 
-    const propertyId = Number(req.params.propertyId);
-    if (!propertyId) {
-      console.warn('Invalid propertyId provided:', req.params.propertyId);
-      throw new ClientError(400, 'propertyId is required');
+    const id = Number(req.params.id);
+    if (!id) {
+      console.warn('Invalid property id provided:', req.params.id);
+      throw new ClientError(400, 'property id is required');
     }
 
     // Verify Owner
     const verifyOwnerSql = `
      SELECT * FROM "properties" 
-     WHERE "propertyId" = $1 AND "userId" = $2
+     WHERE "id" = $1 AND "userId" = $2
    `;
-    const ownershipResult = await db.query(verifyOwnerSql, [
-      propertyId,
-      userId,
-    ]);
+    const ownershipResult = await db.query(verifyOwnerSql, [id, userId]);
 
     if (ownershipResult.rows.length === 0) {
       throw new ClientError(403, 'Not authorized to update this property');
@@ -220,7 +214,7 @@ router.put('/:propertyId', async (req, res, next) => {
         "mortgageBalance" = $4,
         "hoaPayment" = $5,
         "interestRate" = $6
-        WHERE "propertyId" = $7
+        WHERE "id" = $7
         RETURNING *;
         `;
 
@@ -231,27 +225,27 @@ router.put('/:propertyId', async (req, res, next) => {
       mortgageBalance !== undefined ? Math.round(mortgageBalance) : null,
       hoaPayment !== undefined ? Math.round(hoaPayment) : null,
       interestRate !== undefined ? Math.round(interestRate) : null,
-      propertyId,
+      id,
     ];
 
     const result = await db.query(sql, params);
 
     if (result.rows.length === 0) {
-      throw new ClientError(404, `Property with id ${propertyId} not found`);
+      throw new ClientError(404, `Property with id ${id} not found`);
     }
 
     console.log('Updated property:', result.rows[0]);
 
     res.json(result.rows[0]);
   } catch (err) {
-    console.error('Error in PUT /properties/:propertyId:', err);
+    console.error('Error in PUT /properties/:id:', err);
 
     next(err);
   }
 });
 
 // DELETE a property
-router.delete('/:propertyId', async (req, res, next) => {
+router.delete('/:id', async (req, res, next) => {
   try {
     console.log('Delete Property Request params:', req.params);
 
@@ -260,42 +254,39 @@ router.delete('/:propertyId', async (req, res, next) => {
       throw new ClientError(401, 'Authentication required');
     }
 
-    const propertyId = Number(req.params.propertyId);
-    if (!propertyId) {
-      console.warn('Invalid propertyId provided:', req.params.propertyId);
-      throw new ClientError(400, 'propertyId is required');
+    const id = Number(req.params.id);
+    if (!id) {
+      console.warn('Invalid property id provided:', req.params.id);
+      throw new ClientError(400, 'property id is required');
     }
 
     // Verify ownership
     const verifyOwnerSql = `
     SELECT * FROM "properties" 
-    WHERE "propertyId" = $1 AND "userId" = $2
+    WHERE "id" = $1 AND "userId" = $2
     `;
-    const ownershipResult = await db.query(verifyOwnerSql, [
-      propertyId,
-      userId,
-    ]);
+    const ownershipResult = await db.query(verifyOwnerSql, [id, userId]);
     if (ownershipResult.rows.length === 0) {
       throw new ClientError(403, 'Not authorized to delete this property');
     }
 
     const sql = `
       DELETE FROM "properties"
-      WHERE "propertyId" = $1
+      WHERE "id" = $1
       RETURNING *
     `;
 
-    const result = await db.query(sql, [propertyId]);
+    const result = await db.query(sql, [id]);
 
     if (result.rows.length === 0) {
-      throw new ClientError(404, `Property with id ${propertyId} not found`);
+      throw new ClientError(404, `Property with id ${id} not found`);
     }
 
     console.log('Deleted property:', result.rows[0]);
 
     res.sendStatus(204);
   } catch (err) {
-    console.error('Error in DELETE /properties/:propertyId:', err);
+    console.error('Error in DELETE /properties/:id:', err);
 
     next(err);
   }

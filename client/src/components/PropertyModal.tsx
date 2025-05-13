@@ -9,9 +9,8 @@ import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 interface PropertyModalProps {
   property: PropertyType;
-  onClose: () => void;
   onUpdate: (updatedProperty: PropertyType) => void;
-  onDelete: (propertyId: number) => Promise<void>;
+  onDelete: (id: number) => Promise<void>;
 }
 
 export function PropertyModal({
@@ -73,25 +72,15 @@ export function PropertyModal({
       }
       return value || 0;
     }
-
     try {
-      // Make a copy of the edited property
-      const cleanedProperty = { ...editedProperty };
-
-      // Explicitly convert each field to a number
-      cleanedProperty.mortgageBalance = parseNumberInput(
-        editedProperty.mortgageBalance
-      );
-      cleanedProperty.mortgagePayment = parseNumberInput(
-        editedProperty.mortgagePayment
-      );
-      cleanedProperty.interestRate = parseNumberInput(
-        editedProperty.interestRate
-      );
-      cleanedProperty.hoaPayment = parseNumberInput(editedProperty.hoaPayment);
-      cleanedProperty.monthlyRent = parseNumberInput(
-        editedProperty.monthlyRent
-      );
+      const cleanedProperty = {
+        ...editedProperty,
+        mortgageBalance: parseNumberInput(editedProperty.mortgageBalance),
+        mortgagePayment: parseNumberInput(editedProperty.mortgagePayment),
+        interestRate: parseNumberInput(editedProperty.interestRate),
+        hoaPayment: parseNumberInput(editedProperty.hoaPayment),
+        monthlyRent: parseNumberInput(editedProperty.monthlyRent),
+      };
 
       onUpdate(cleanedProperty);
       setIsEditing(false);
@@ -230,17 +219,11 @@ export function PropertyModal({
         <div className="grid gap-2">
           <div className="text-sm font-medium">Estimated Value</div>
           <div className="text-2xl font-bold">
-            {formatCurrency(property.estimatedValue)}
+            {formatCurrency(property.price || 0)}
           </div>
           <div className="text-sm text-muted-foreground">
-            Range:{' '}
-            {formatCurrency(
-              property.estimatedRangeLow || property.priceRangeLow || 0
-            )}{' '}
-            -{' '}
-            {formatCurrency(
-              property.estimatedRangeHigh || property.priceRangeHigh || 0
-            )}
+            Range: {formatCurrency(property.priceRangeLow || 0)} -{' '}
+            {formatCurrency(property.priceRangeHigh || 0)}
           </div>
         </div>
 
@@ -248,7 +231,7 @@ export function PropertyModal({
           <div className="text-sm font-medium">Property Details</div>
           <div className="text-sm">
             {property.propertyType} • {property.bedrooms} bed •{' '}
-            {property.bathrooms} bath •{' '}
+            {property.bathrooms} baths •{' '}
             {property.squareFootage.toLocaleString()} sqft
           </div>
           <div className="text-sm">Built in {property.yearBuilt}</div>
