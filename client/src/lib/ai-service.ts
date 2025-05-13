@@ -13,14 +13,20 @@ export async function getFinancialInsights(
   messages: string[] = []
 ): Promise<AIInsights[]> {
   try {
-    console.log('properties sent to AI:', properties);
+    // Create a trimmed version of properties without images
+    const trimmedProperties = properties.map((prop) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { image, ...rest } = prop;
+      return rest;
+    });
+
     const token = readToken();
     if (!token) {
       throw new Error('No token found');
     }
 
     const payload = {
-      model: 'gpt-4',
+      model: 'gpt-4-turbo',
       messages: [
         {
           role: 'system',
@@ -33,7 +39,7 @@ export async function getFinancialInsights(
       Based on the following real estate portfolio data, return a JSON object containing AI-driven insights and recommendations. Your response should be helpful, realistic, and tailored to the user's financial position.
       
       DATA:
-      ${JSON.stringify(properties, null, 2)}
+      ${JSON.stringify(trimmedProperties, null, 2)}
       
       OUTPUT FORMAT (strictly follow this structure):
       {
@@ -64,53 +70,11 @@ export async function getFinancialInsights(
     if (!response.ok) {
       throw new Error('Failed to fetch insights');
     }
-    console.log('Response status:', response.status);
+
     const data = await response.json();
-    console.log('Raw response data:', data);
     return data.insights || [];
   } catch (error) {
     console.error('Error fetching insights:', error);
     throw error;
   }
-}
-
-// You can add this function to your ai-service.ts file
-export async function testAIEndpoint() {
-  const token = readToken();
-  if (!token) {
-    throw new Error('No token found');
-  }
-
-  const testMessages = [
-    {
-      role: 'system',
-      content:
-        'You are a helpful financial assistant that provides insights in JSON format.',
-    },
-    {
-      role: 'user',
-      content:
-        'Please give me a simple financial insight about real estate investing. Format as a JSON with keys: "tip", "reason", "action".',
-    },
-  ];
-
-  const response = await fetch('/api/ai/insights', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({
-      model: 'gpt-4',
-      messages: testMessages,
-    }),
-  });
-
-  if (!response.ok) {
-    throw new Error(`Failed to fetch insights: ${response.status}`);
-  }
-
-  const data = await response.json();
-  console.log('AI Endpoint Test Response:', data);
-  return data;
 }

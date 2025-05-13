@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BarChart2, Target, Brain, TrendingUp } from 'lucide-react';
 import { Button } from './ui/button';
-import { getFinancialInsights, testAIEndpoint } from '@/lib/ai-service';
+import { getFinancialInsights } from '@/lib/ai-service';
 import { PropertyType } from '@/types/PropertyTypes';
 
 interface AIInsightsProps {
@@ -63,7 +63,7 @@ export function AIInsights({ properties }: AIInsightsProps) {
             }}>
             Get AI Insights
           </Button>
-          <Button onClick={testAIEndpoint}>Test AI Endpoint</Button>
+
           {insights && (
             <div className="mt-4">
               <h3 className="text-lg font-medium">AI Insights</h3>
