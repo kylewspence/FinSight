@@ -9,6 +9,7 @@ import authRoutes from './auth-routes';
 import propertyRentcastRoute from './routes/rentcast/property';
 import valueRentcastRoute from './routes/rentcast/value';
 import investmentRoutes from './routes/investment-routes';
+import aiRoutes from './routes/ai-routes';
 
 const db = new pg.Pool({
   connectionString: process.env.DATABASE_URL,
@@ -43,6 +44,9 @@ app.use('/api/auth', authRoutes);
 
 // Investment Routes
 app.use('/api/investments', investmentRoutes);
+
+// AI Routes
+app.use('/api/ai', aiRoutes);
 
 // RentCast Routes
 app.use('/api/rentcast/property', propertyRentcastRoute);

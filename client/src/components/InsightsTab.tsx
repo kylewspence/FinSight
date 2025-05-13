@@ -2,9 +2,17 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BarChart2, Target, Brain, TrendingUp } from 'lucide-react';
+import { Button } from './ui/button';
+import { getFinancialInsights, testAIEndpoint } from '@/lib/ai-service';
+import { PropertyType } from '@/types/PropertyTypes';
 
-export function AIInsights() {
+interface AIInsightsProps {
+  properties: PropertyType[];
+}
+
+export function AIInsights({ properties }: AIInsightsProps) {
   const [activeTab, setActiveTab] = useState('overview');
+  const [insights, setInsights] = useState<any>(null);
 
   return (
     <div className="flex-1 space-y-6 p-6 md:p-8 pt-6">
@@ -46,6 +54,24 @@ export function AIInsights() {
             </CardHeader>
             <CardContent></CardContent>
           </Card>
+
+          <Button
+            onClick={async () => {
+              const result = await getFinancialInsights(properties);
+              setInsights(result);
+              console.log(result);
+            }}>
+            Get AI Insights
+          </Button>
+          <Button onClick={testAIEndpoint}>Test AI Endpoint</Button>
+          {insights && (
+            <div className="mt-4">
+              <h3 className="text-lg font-medium">AI Insights</h3>
+              <pre className="mt-2 p-4 bg-gray-100 rounded-md overflow-auto">
+                {JSON.stringify(insights, null, 2)}
+              </pre>
+            </div>
+          )}
         </TabsContent>
 
         <TabsContent value="goals" className="space-y-6"></TabsContent>

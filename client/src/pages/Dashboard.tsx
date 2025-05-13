@@ -80,7 +80,7 @@ export default function Dashboard() {
         </TabsContent>
 
         <TabsContent value="insights">
-          <InsightsTab />
+          <InsightsTab properties={properties} />
         </TabsContent>
       </Tabs>
     </div>
