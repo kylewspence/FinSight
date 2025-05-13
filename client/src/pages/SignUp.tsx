@@ -12,6 +12,12 @@ import { Label } from '@/components/ui/label';
 import { Link, useNavigate } from 'react-router-dom';
 import { FormEvent } from 'react';
 import { useState } from 'react';
+import { User, useUser } from '@/components/useUser';
+
+type AuthData = {
+  user: User;
+  token: string;
+};
 
 export default function LoginForm({
   className,
@@ -19,6 +25,7 @@ export default function LoginForm({
 }: React.ComponentPropsWithoutRef<'div'>) {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { handleSignIn } = useUser();
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -44,6 +51,38 @@ export default function LoginForm({
       navigate('/dashboard');
     } catch (err) {
       alert(`Error registering user: ${err}`);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function handleGuestLogin() {
+    try {
+      setIsLoading(true);
+
+      // Guest credentials for user with userId 1
+      const guestData = {
+        userName: 'kdubs1',
+        password: 'kdubs1',
+      };
+
+      const req = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(guestData),
+      };
+      const res = await fetch('/api/auth/login', req);
+      if (!res.ok) {
+        throw new Error(`fetch Error ${res.status}`);
+      }
+
+      const { user, token } = (await res.json()) as AuthData;
+
+      handleSignIn(user, token);
+
+      navigate('/dashboard');
+    } catch (err) {
+      alert(`Error signing in as guest: ${err}`);
     } finally {
       setIsLoading(false);
     }
@@ -90,6 +129,13 @@ export default function LoginForm({
               </div>
               <Button disabled={isLoading} type="submit" className="w-full">
                 Sign Up
+              </Button>
+              <Button
+                disabled={isLoading}
+                onClick={handleGuestLogin}
+                variant="outline"
+                className="w-full">
+                Login as Guest
               </Button>
             </div>
             <div className="mt-4 text-center text-sm">
