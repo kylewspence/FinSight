@@ -5,67 +5,71 @@ import { Plus } from 'lucide-react';
 import { ButtonWithIcon } from './ui/buttonwithicon';
 import { AddPropertyForm } from './AddPropertyForm';
 import { PropertyType } from '@/types/PropertyTypes';
-import { useEffect, useState } from 'react';
-import { deleteProperty, fetchProperties, updateProperty } from '@/lib/data';
+import { useState } from 'react';
+import { deleteProperty, updateProperty } from '@/lib/data';
 
-export function PropertiesTab() {
-  const [properties, setProperties] = useState<PropertyType[]>([]);
+interface PropertiesTabProps {
+  properties: PropertyType[];
+  onPropertyAdd?: (property: PropertyType) => void;
+  onPropertyUpdate?: (property: PropertyType) => void;
+  onPropertyDelete?: (propertyId: number) => void;
+}
+
+export function PropertiesTab({
+  properties,
+  onPropertyAdd,
+  onPropertyUpdate,
+  onPropertyDelete,
+}: PropertiesTabProps) {
   const [showAddForm, setShowAddForm] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    async function loadProperties() {
-      try {
-        const data = await fetchProperties();
-        setProperties(data);
-      } catch (err) {
-        setError(
-          err instanceof Error ? err.message : 'Failed to load properties'
-        );
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    loadProperties();
-  }, []);
 
   // Handle adding a new property
   function handlePropertyAdded(newProperty: PropertyType) {
-    setProperties([...properties, newProperty]);
+    if (onPropertyAdd) {
+      onPropertyAdd(newProperty);
+    }
     setShowAddForm(false);
   }
-
+  // Handle updating a property
   async function handlePropertyUpdate(updatedProperty: PropertyType) {
     try {
+      setIsLoading(true);
       await updateProperty(updatedProperty);
-      // Update local state with updated property
-      setProperties((prevProperties) =>
-        prevProperties.map((prop) =>
-          prop.id === updatedProperty.id ? updatedProperty : prop
-        )
-      );
+
+      if (onPropertyUpdate) {
+        onPropertyUpdate(updatedProperty);
+      }
       setError(null);
     } catch (err) {
       setError(
         err instanceof Error ? err.message : 'Failed to update property'
       );
+    } finally {
+      setIsLoading(false);
     }
   }
-
+  // Handle deleting a property
   async function handlePropertyDelete(id: number) {
     try {
+      setIsLoading(true);
       await deleteProperty(id);
-      // Remove the property from local state
-      setProperties((prev) => prev.filter((p) => p.id !== id));
+
+      if (onPropertyDelete) {
+        onPropertyDelete(id);
+      }
+      setError(null);
     } catch (err) {
       setError(
         err instanceof Error ? err.message : 'Failed to delete property'
       );
+    } finally {
+      setIsLoading(false);
     }
   }
 
-  if (isLoading) {
+  if (isLoading && properties.length === 0) {
     return (
       <div className="flex items-center justify-center h-full">
         <div className="text-lg">Loading properties...</div>

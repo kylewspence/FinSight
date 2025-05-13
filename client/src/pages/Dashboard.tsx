@@ -10,18 +10,45 @@ import InsightsTab from '@/components/InsightsTab';
 
 export default function Dashboard() {
   const [properties, setProperties] = useState<PropertyType[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
+  // Load Properties and pass to different tabs.
   useEffect(() => {
     async function loadProperties() {
       try {
         const data = await fetchProperties();
         setProperties(data);
       } catch (err) {
+        setError(
+          err instanceof Error ? err.message : 'Failed to load properties'
+        );
         console.error(err);
+      } finally {
+        setIsLoading(false);
       }
     }
     loadProperties();
   }, []);
+
+  function handlePropertyAdd(newProperty: PropertyType) {
+    setProperties((prev) => [...prev, newProperty]);
+  }
+
+  function handlePropertyUpdate(updatedProperty: PropertyType) {
+    setProperties((prev) =>
+      prev.map((prop) =>
+        prop.id === updatedProperty.id ? updatedProperty : prop
+      )
+    );
+  }
+
+  function handlePropertyDelete(propertyId: number) {
+    setProperties((prev) => prev.filter((prop) => prop.id !== propertyId));
+  }
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
     <div className="flex flex-col gap-4">
@@ -40,7 +67,12 @@ export default function Dashboard() {
         </TabsContent>
 
         <TabsContent value="properties">
-          <PropertiesTab />
+          <PropertiesTab
+            properties={properties}
+            onPropertyAdd={handlePropertyAdd}
+            onPropertyUpdate={handlePropertyUpdate}
+            onPropertyDelete={handlePropertyDelete}
+          />
         </TabsContent>
 
         <TabsContent value="investments">
