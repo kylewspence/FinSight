@@ -1,39 +1,37 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { BarChart2, Target, Brain, TrendingUp } from 'lucide-react';
+import { Brain } from 'lucide-react';
 import { Button } from './ui/button';
 import { getFinancialInsights } from '@/lib/ai-service';
 import { PropertyType } from '@/types/PropertyTypes';
 import { saveInsights } from '@/lib/ai-service';
 import type { AIInsights } from '@/lib/ai-service';
 
+
 interface AIInsightsProps {
   properties: PropertyType[];
+  insights: AIInsights | null;
+  isLoading: boolean;
+  onInsightsUpdated: () => Promise<void>;
 }
 
-export function AIInsights({ properties }: AIInsightsProps) {
-  const [activeTab, setActiveTab] = useState('overview');
-  const [insights, setInsights] = useState<AIInsights | null>(null);
+export function AIInsightsTab({ 
+  properties, 
+  insights, 
+  isLoading, 
+  onInsightsUpdated
+ }: AIInsightsProps) {
   const [loading, setLoading] = useState(false);
 
-  console.log('insights', insights);
 
-  useEffect(() => {
-    console.log('Insights state changed:', insights);
-  }, [insights]);
 
   async function generateAndSaveInsights() {
     try {
       setLoading(true);
-      // Get insights with corrected typing
       const result = await getFinancialInsights(properties);
-      console.log('Generated insights response:', result);
-
+      
       if (result && result.insights) {
-        // Validate that all required fields exist and are strings
-        const { overview, timelineToPurchase, marketTrends, peerStrategies } =
-          result.insights;
+        const { overview, timelineToPurchase, marketTrends, peerStrategies } = result.insights;
 
         if (
           typeof overview === 'string' &&
@@ -41,20 +39,16 @@ export function AIInsights({ properties }: AIInsightsProps) {
           typeof marketTrends === 'string' &&
           typeof peerStrategies === 'string'
         ) {
-          setInsights(result.insights);
-
           try {
             await saveInsights(result.insights);
-            console.log('Saved insights successfully');
+            await onInsightsUpdated();
           } catch (saveError) {
             console.error('Error saving insights:', saveError);
           }
-        } else {
-          console.error('Invalid insights format:', result.insights);
         }
       }
     } catch (err) {
-      console.error('Error generating or saving insights:', err);
+      console.error('Error generating insights:', err);
     } finally {
       setLoading(false);
     }
@@ -77,79 +71,52 @@ export function AIInsights({ properties }: AIInsightsProps) {
         </Button>
       </div>
 
-      <Tabs
-        value={activeTab}
-        onValueChange={setActiveTab}
-        className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="overview" className="flex items-center">
-            <BarChart2 className="mr-2 h-4 w-4" />
-            Overview
-          </TabsTrigger>
-          <TabsTrigger value="goals" className="flex items-center">
-            <Target className="mr-2 h-4 w-4" />
-            Goals
-          </TabsTrigger>
-          <TabsTrigger value="recommendations" className="flex items-center">
-            <TrendingUp className="mr-2 h-4 w-4" />
-            Recommendations
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="overview" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Financial Health Overview</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {insights && (
-                <div className="space-y-4">
-                  <div>
-                    <h3 className="font-medium text-lg">Portfolio Overview</h3>
-                    <p>{insights.overview}</p>
-                  </div>
-
-                  <div>
-                    <h3 className="font-medium text-lg">
-                      Timeline to Purchase
-                    </h3>
-                    <p>{insights.timelineToPurchase}</p>
-                  </div>
-
-                  <div>
-                    <h3 className="font-medium text-lg">Market Trends</h3>
-                    <p>{insights.marketTrends}</p>
-                  </div>
-
-                  <div>
-                    <h3 className="font-medium text-lg">Peer Strategies</h3>
-                    <p>{insights.peerStrategies}</p>
-                  </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="goals" className="space-y-6"></TabsContent>
-
-        <TabsContent value="recommendations" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>AI Recommendations</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-muted-foreground">
-                Based on your financial data, here are personalized
-                recommendations:
+      <Card>
+        <CardHeader>
+          <CardTitle>Recent Insights</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {isLoading ? (
+            <p>Loading insights...</p>
+          ) : insights ? (
+            <div className="space-y-4">
+              <div>
+                <h3 className="font-medium mb-2">Overview</h3>
+                <p className="text-sm text-gray-600">{insights.overview}</p>
               </div>
-              {/* We'll add AI recommendations component here */}
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+              <div>
+                <h3 className="font-medium mb-2">Timeline to Purchase</h3>
+                <p className="text-sm text-gray-600">{insights.timelineToPurchase}</p>
+              </div>
+              <div>
+                <h3 className="font-medium mb-2">Market Trends</h3>
+                {insights.marketTrends.includes('1.') ? (
+                  // If it contains numbered items, split and display as a list
+                  <ul className="list-disc pl-5 space-y-2">
+                    {insights.marketTrends
+                      .split(/\d+\.\s+/) // Split by numbers followed by dot and space
+                      .filter(item => item.trim().length > 0) // Remove empty strings
+                      .map((trend, index) => (
+                        <li key={index} className="text-sm text-gray-600">{trend.trim()}</li>
+                      ))}
+                  </ul>
+                ) : (
+                  // Otherwise display as regular text
+                  <p className="text-sm text-gray-600">{insights.marketTrends}</p>
+                )}
+              </div>
+              <div>
+                <h3 className="font-medium mb-2">Peer Strategies</h3>
+                <p className="text-sm text-gray-600">{insights.peerStrategies}</p>
+              </div>
+            </div>
+          ) : (
+            <p>Generate insights to see your financial analysis here.</p>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }
 
-export default AIInsights;
+export default AIInsightsTab;

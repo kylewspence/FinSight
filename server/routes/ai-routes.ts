@@ -17,6 +17,37 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+// Get all insights for a user
+router.get('/insights', async (req, res, next) => {
+  try {
+    console.log(`GET /ai/${req.user?.userId} requested`);
+
+    // Verify user is authenticated
+    const userId = Number(req.user?.userId);
+    if (!userId) {
+      console.warn(`Invalid userId provided: ${req.user?.userId}`);
+
+      throw new ClientError(400, 'userId is required');
+    }
+
+    const sql = `
+        SELECT * from "insights"
+        WHERE "userId" = $1
+        ORDER by "insightId"
+        `;
+    const result = await db.query(sql, [userId]);
+    console.log(`Found ${result.rows.length} insights for user ${userId}`);
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error(`Error in GET /api/ai/ for ${req.user?.userId}:`, err);
+
+    next(err);
+  }
+});
+
+
+
 // POST endpoint for AI insights
 router.post('/insights', async (req, res, next) => {
   try {

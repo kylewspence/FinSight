@@ -133,3 +133,11 @@
     }
   }
 }
+
+button, 
+[role="button"], 
+[role="tab"],
+.button,
+a {
+  cursor: pointer;
+}

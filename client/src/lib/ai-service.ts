@@ -45,7 +45,7 @@ export async function getFinancialInsights(
       {
         "overview": "Brief summary of the user's financial health. Mention overall asset value, income vs. liabilities, and anything concerning or promising.",
         "timelineToPurchase": "Estimate when the user might be able to purchase another investment property. Consider monthly rent, liabilities, taxes (~25%), property management (~8%), and reserves. Be realistic.",
-        "marketTrends": "Suggest 2-3 up-and-coming markets for similar property types. Give 1 reason why each is worth researching.",
+        "marketTrends": "Suggest 2-3 up-and-coming markets for similar property types. Give 1 reason why each is worth researching. Separate these so they parsed they show up as individual lines.",
         "peerStrategies": "Speculate on what other real estate investors might be doing with similar portfolios and recommend one strategic adjustment for this user."
       }
       
@@ -122,4 +122,30 @@ export async function getAndSaveInsights(
     await saveInsights(insights);
   }
   return insights;
+}
+
+
+export async function getSavedInsights(): Promise<AIInsights[]> {
+  try {
+    const token = readToken();
+    if (!token) {
+      throw new Error('No token found');
+    }
+
+    const response = await fetch('/api/ai/insights', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch insights history');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching insights history:', error);
+    throw error;
+  }
 }
