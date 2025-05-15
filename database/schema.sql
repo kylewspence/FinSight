@@ -33,7 +33,7 @@ CREATE TABLE "properties" (
   "interestRate" numeric,
   "image" text,
   "monthlyRent" integer,
-  "notes" text,
+  "notes" text
 );
 
 CREATE TABLE "transactions" (
