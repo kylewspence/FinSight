@@ -6,30 +6,59 @@ import { fetchProperties } from '@/lib/data';
 import { useEffect } from 'react';
 import { useState } from 'react';
 import { PropertyType } from '@/types/PropertyTypes';
-import InsightsTab from '@/components/InsightsTab';
+import { AIInsights, getSavedInsights } from '@/lib/ai-service';
+import AIInsightsTab from '@/components/InsightsTab';
 
 export default function Dashboard() {
   const [properties, setProperties] = useState<PropertyType[]>([]);
+  const [insights, setInsights] = useState<AIInsights | null>(null);
+  const [isLoadingInsights, setIsLoadingInsights] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  // Load Properties and pass to different tabs.
+  const [activeTab, setActiveTab] = useState("overview");
+  // Load Properties and Insights
   useEffect(() => {
-    async function loadProperties() {
+    async function loadData() {
       try {
-        const data = await fetchProperties();
-        setProperties(data);
+        setIsLoading(true);
+        
+        // Load properties
+        const propertiesData = await fetchProperties();
+        setProperties(propertiesData);
+        
+        // Load insights
+        const savedInsights = await getSavedInsights();
+        if (savedInsights.length > 0) {
+          setInsights(savedInsights[savedInsights.length - 1]);
+        }
       } catch (err) {
         setError(
-          err instanceof Error ? err.message : 'Failed to load properties'
+          err instanceof Error ? err.message : 'Failed to load data'
         );
         console.error(err);
       } finally {
         setIsLoading(false);
+        setIsLoadingInsights(false);
       }
     }
-    loadProperties();
+    
+    loadData();
   }, []);
+
+    // Separate function to load insights that can be passed down
+    async function loadInsights() {
+      try {
+        setIsLoadingInsights(true);
+        const savedInsights = await getSavedInsights();
+        if (savedInsights.length > 0) {
+          setInsights(savedInsights[savedInsights.length - 1]);
+        }
+      } catch (error) {
+        console.error('Error loading insights:', error);
+      } finally {
+        setIsLoadingInsights(false);
+      }
+    }
 
   function handlePropertyAdd(newProperty: PropertyType) {
     setProperties((prev) => [...prev, newProperty]);
@@ -52,9 +81,7 @@ export default function Dashboard() {
 
   return (
     <div className="flex flex-col gap-4">
-      {/* <h1 className="text-3xl font-bold">Financial Overview</h1> */}
-
-      <Tabs defaultValue="overview" className="w-full">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList>
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="properties">Properties</TabsTrigger>
@@ -63,7 +90,7 @@ export default function Dashboard() {
         </TabsList>
 
         <TabsContent value="overview" className="w-full">
-          <OverviewTab properties={properties} />
+          <OverviewTab properties={properties} insights={insights} onViewInsights={() => {setActiveTab('insights')}} />
         </TabsContent>
 
         <TabsContent value="properties">
@@ -80,7 +107,12 @@ export default function Dashboard() {
         </TabsContent>
 
         <TabsContent value="insights">
-          <InsightsTab />
+        <AIInsightsTab 
+            properties={properties}
+            insights={insights}
+            isLoading={isLoadingInsights}
+            onInsightsUpdated={loadInsights} 
+          />
         </TabsContent>
       </Tabs>
     </div>

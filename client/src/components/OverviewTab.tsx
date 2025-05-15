@@ -13,15 +13,20 @@ import {
   getTotalInvestmentIncome,
   upcomingTasks,
 } from '@/lib/mockData';
-import { CalendarDays } from 'lucide-react';
+import { CalendarDays, ExternalLink} from 'lucide-react';
 import { format } from 'date-fns';
 import { ScrollArea } from './ui/scroll-area';
+import { AIInsights } from '@/lib/ai-service';
+import { ButtonWithIcon } from './ui/buttonwithicon';
+
 
 interface OverviewTabProps {
   properties: PropertyType[];
+  insights: AIInsights | null;
+  onViewInsights: () => void;
 }
 
-export function OverviewTab({ properties = [] }: OverviewTabProps) {
+export function OverviewTab({ properties = [], insights, onViewInsights }: OverviewTabProps) {
   // Calculate totals using useMemo for performance
   const totals = useMemo(() => {
     let realEstateAssets = 0;
@@ -100,7 +105,7 @@ export function OverviewTab({ properties = [] }: OverviewTabProps) {
     <div className="grid gap-6">
       <h2 className="text-2xl font-bold">Overview</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card className="p-4 w-full">
+        <Card className="p-4 w-full justify-center">
           <div className="grid grid-cols-2 gap-4 p-4">
             <div className="text-sm text-muted-foreground">Total Assets</div>
             <div className="text-xl font-bold">
@@ -189,8 +194,23 @@ export function OverviewTab({ properties = [] }: OverviewTabProps) {
         </Card>
 
         <Card className="p-4">
-          <h3 className="font-medium text-md mb-2">TBD</h3>
-        </Card>
+          <div className="flex justify-between items-center">
+            <h3 className="font-medium text-md mb-2">AI Insights</h3>
+            <ButtonWithIcon variant="ghost" icon={ExternalLink} onClick={onViewInsights}>
+            View All
+            </ButtonWithIcon>
+          </div>
+            {insights ? (
+               <>
+                <p className="text-md text-gray-600 line-clamp-5">{insights.overview}</p>
+              <div className="text-sm text-muted-foreground">
+               Updated: {new Date().toLocaleDateString()}
+              </div>
+              </>
+            ) : (
+               <p className="text-sm text-muted-foreground">No insights available</p>
+              )}
+          </Card>
 
         <Card className="p-4">
           <h3 className="font-medium text-md">Upcoming Tasks:</h3>
@@ -219,7 +239,7 @@ export function OverviewTab({ properties = [] }: OverviewTabProps) {
         </Card>
       </div>
 
-      <div className="mt-2 grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="mt-2 grid grid-cols-1 lg:grid-cols-1 gap-6">
         <Card className="p-4 w-full">
           <CardHeader>
             <CardTitle>Asset Allocation</CardTitle>
@@ -247,12 +267,7 @@ export function OverviewTab({ properties = [] }: OverviewTabProps) {
               </PieChart>
             </ResponsiveContainer>
           </CardContent>
-        </Card>
-
-        <Card className="p-4">
-          <h3 className="font-medium text-md">Watchlist:</h3>
-          <ScrollArea className="h-full"></ScrollArea>
-        </Card>
+        </Card>      
       </div>
     </div>
   );
