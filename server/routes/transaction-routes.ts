@@ -15,8 +15,6 @@ router.use(authMiddleware);
 // GET all transactions for a user
 router.get('/', async (req, res, next) => {
   try {
-    console.log(`GET /transactions/${req.user?.userId} requested`);
-
     const userId = Number(req.user?.userId);
     if (!userId) {
       console.warn(`Invalid userId provided: ${req.user?.userId}`);
@@ -30,7 +28,6 @@ router.get('/', async (req, res, next) => {
         `;
 
     const result = await db.query(sql, [userId]);
-    console.log(`Found ${result.rows.length} transactions for user ${userId}`);
 
     res.json(result.rows);
   } catch (err) {
@@ -42,8 +39,6 @@ router.get('/', async (req, res, next) => {
 // POST a new transaction
 router.post('/', async (req, res, next) => {
   try {
-    console.log('POST /transactions requested');
-
     const userId = Number(req.user?.userId);
     if (!userId) {
       throw new ClientError(401, 'Authentication required');
@@ -63,7 +58,6 @@ router.post('/', async (req, res, next) => {
 
     const params = [userId, date, amount, category, description];
     const result = await db.query(sql, params);
-    console.log('Result:', result.rows[0]);
 
     res.status(201).json(result.rows[0]);
   } catch (err) {
@@ -75,9 +69,6 @@ router.post('/', async (req, res, next) => {
 // PUT to update a transaction
 router.put('/:transactionId', async (req, res, next) => {
   try {
-    console.log('Put Transaction Request params:', req.params);
-    console.log('Put Transaction Request body:', req.body);
-
     const userId = Number(req.user?.userId);
     if (!userId) {
       throw new ClientError(401, 'Authentication required');
@@ -116,7 +107,7 @@ router.put('/:transactionId', async (req, res, next) => {
 
     const params = [date, description, category, amount, transactionId];
     const result = await db.query(sql, params);
-    console.log('Result:', result.rows[0]);
+
     if (result.rows.length === 0) {
       throw new ClientError(
         404,
@@ -135,8 +126,6 @@ router.put('/:transactionId', async (req, res, next) => {
 // DELETE a transaction
 router.delete('/:transactionId', async (req, res, next) => {
   try {
-    console.log('Delete Transaction Request params:', req.params);
-
     const userId = Number(req.user?.userId);
     if (!userId) {
       throw new ClientError(401, 'Authentication required');
@@ -167,7 +156,7 @@ router.delete('/:transactionId', async (req, res, next) => {
       `;
 
     const result = await db.query(sql, [transactionId]);
-    console.log('Result:', result.rows[0]);
+
     if (result.rows.length === 0) {
       throw new ClientError(
         404,

@@ -1,6 +1,6 @@
 -- USERS
 INSERT INTO "users" ("userName", "hashedPassword") VALUES
-  ('kdubs1', '$argon2id$v=19$m=65536,t=3,p=4$hJZ+bXoGbVpKLDy/OBtaTg$lpDtMvEx+Im5T5BzwbELTnHFwif8wiEzha6cy5flMLc');
+  ('Guest', '$argon2id$v=19$m=65536,t=3,p=4$hJZ+bXoGbVpKLDy/OBtaTg$lpDtMvEx+Im5T5BzwbELTnHFwif8wiEzha6cy5flMLc');
 
 -- PROPERTIES
 INSERT INTO "properties" (

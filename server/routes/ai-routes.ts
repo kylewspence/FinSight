@@ -20,8 +20,6 @@ const openai = new OpenAI({
 // Get all insights for a user
 router.get('/insights', async (req, res, next) => {
   try {
-    console.log(`GET /ai/${req.user?.userId} requested`);
-
     // Verify user is authenticated
     const userId = Number(req.user?.userId);
     if (!userId) {
@@ -36,7 +34,6 @@ router.get('/insights', async (req, res, next) => {
         ORDER by "insightId"
         `;
     const result = await db.query(sql, [userId]);
-    console.log(`Found ${result.rows.length} insights for user ${userId}`);
 
     res.json(result.rows);
   } catch (err) {
@@ -45,8 +42,6 @@ router.get('/insights', async (req, res, next) => {
     next(err);
   }
 });
-
-
 
 // POST endpoint for AI insights
 router.post('/insights', async (req, res, next) => {
@@ -80,7 +75,7 @@ router.post('/insights', async (req, res, next) => {
       });
     } catch (error) {
       console.error('Error parsing AI response as JSON:', error);
-      console.log('Raw content:', content);
+
       res.json({
         insights: {
           overview:
@@ -99,11 +94,7 @@ router.post('/insights', async (req, res, next) => {
 
 router.post('/insights/save', async (req, res, next) => {
   try {
-    console.log('POST /ai/insights/save requested');
-    console.log('Request body:', JSON.stringify(req.body, null, 2));
-
     const userId = Number(req.user?.userId);
-    console.log('User ID:', userId);
 
     if (!userId) throw new ClientError(401, 'Authentication required');
 
@@ -132,7 +123,6 @@ router.post('/insights/save', async (req, res, next) => {
     ];
 
     const result = await db.query(sql, params);
-    console.log('Database result:', result.rows[0]);
 
     res.status(201).json(result.rows[0]);
   } catch (err) {

@@ -44,7 +44,6 @@ export default function LoginForm({
       }
       const data = await res.json();
       const { user } = data;
-      console.log('Registered', user);
       alert(
         `Successfully registered ${user.userName} as userId ${user.userId}.`
       );
@@ -62,7 +61,7 @@ export default function LoginForm({
 
       // Guest credentials for user with userId 1
       const guestData = {
-        userName: 'kdubs1',
+        userName: 'Guest',
         password: 'kdubs1',
       };
 

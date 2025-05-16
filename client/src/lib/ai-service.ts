@@ -72,7 +72,6 @@ export async function getFinancialInsights(
     }
 
     const data = await response.json();
-    console.log('AI response:', data);
     return data;
   } catch (error) {
     console.error('Error fetching insights:', error);
@@ -82,16 +81,10 @@ export async function getFinancialInsights(
 
 export async function saveInsights(insights: AIInsights): Promise<AIInsights> {
   try {
-    console.log('saveInsights function called');
     const token = readToken();
     if (!token) {
       throw new Error('No token found');
     }
-    console.log('insights before save at saveInsights:', insights);
-    console.log(
-      'Saving insights with data:',
-      JSON.stringify(insights, null, 2)
-    );
     const response = await fetch('/api/ai/insights/save', {
       method: 'POST',
       headers: {
@@ -115,7 +108,6 @@ export async function saveInsights(insights: AIInsights): Promise<AIInsights> {
 export async function getAndSaveInsights(
   properties: PropertyType[]
 ): Promise<AIInsights> {
-  console.log('getAndSaveInsights function called');
   const result = await getFinancialInsights(properties);
   const insights = result.insights;
   if (insights) {
@@ -123,7 +115,6 @@ export async function getAndSaveInsights(
   }
   return insights;
 }
-
 
 export async function getSavedInsights(): Promise<AIInsights[]> {
   try {
@@ -135,8 +126,8 @@ export async function getSavedInsights(): Promise<AIInsights[]> {
     const response = await fetch('/api/ai/insights', {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${token}`
-      }
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     if (!response.ok) {

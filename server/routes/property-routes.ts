@@ -15,8 +15,6 @@ router.use(authMiddleware);
 // GET all properties for a user
 router.get('/', async (req, res, next) => {
   try {
-    console.log(`GET /properties/${req.user?.userId} requested`);
-
     // Verify user is authenticated
     const userId = Number(req.user?.userId);
     if (!userId) {
@@ -31,7 +29,6 @@ router.get('/', async (req, res, next) => {
         ORDER by "id"
         `;
     const result = await db.query(sql, [userId]);
-    console.log(`Found ${result.rows.length} properties for user ${userId}`);
 
     res.json(result.rows);
   } catch (err) {
@@ -44,8 +41,6 @@ router.get('/', async (req, res, next) => {
 // GET a property by ID
 router.get('/property/:id', async (req, res, next) => {
   try {
-    console.log(`GET /properties/property/${req.params.id} requested`);
-
     const userId = Number(req.user?.userId);
     if (!userId) {
       throw new ClientError(401, 'Authentication required');
@@ -63,7 +58,7 @@ router.get('/property/:id', async (req, res, next) => {
         WHERE "id" = $1 AND "userId" = $2
         `;
     const result = await db.query(sql, [id, userId]);
-    console.log(`Found property with id ${id}`);
+
     if (result.rows.length === 0) {
       console.warn(`Property with id ${id} not found`);
       throw new ClientError(404, `Property with id ${id} not found`);
@@ -79,11 +74,7 @@ router.get('/property/:id', async (req, res, next) => {
 
 // POST a new property
 router.post('/', authMiddleware, async (req, res, next) => {
-  console.log('Received property data:', req.body);
-  console.log('User from token:', req.user);
   try {
-    console.log('POST /properties requested');
-
     // Verify user is authenticated
     const userId = Number(req.user?.userId);
     if (!userId) {
@@ -154,10 +145,8 @@ router.post('/', authMiddleware, async (req, res, next) => {
       Math.round(lastSalePrice) || 0,
       image,
     ];
-    console.log('Params:', params);
 
     const result = await db.query(sql, params);
-    console.log('Result:', result.rows[0]);
 
     res.status(201).json(result.rows[0]);
   } catch (err) {
@@ -170,9 +159,6 @@ router.post('/', authMiddleware, async (req, res, next) => {
 // PUT to update a property
 router.put('/:id', async (req, res, next) => {
   try {
-    console.log('Put Property Request params:', req.params);
-    console.log('Put Property Request body:', req.body);
-
     // Verify user is authenticated
     const userId = Number(req.user?.userId);
     if (!userId) {
@@ -234,8 +220,6 @@ router.put('/:id', async (req, res, next) => {
       throw new ClientError(404, `Property with id ${id} not found`);
     }
 
-    console.log('Updated property:', result.rows[0]);
-
     res.json(result.rows[0]);
   } catch (err) {
     console.error('Error in PUT /properties/:id:', err);
@@ -247,8 +231,6 @@ router.put('/:id', async (req, res, next) => {
 // DELETE a property
 router.delete('/:id', async (req, res, next) => {
   try {
-    console.log('Delete Property Request params:', req.params);
-
     const userId = Number(req.user?.userId);
     if (!userId) {
       throw new ClientError(401, 'Authentication required');
@@ -281,8 +263,6 @@ router.delete('/:id', async (req, res, next) => {
     if (result.rows.length === 0) {
       throw new ClientError(404, `Property with id ${id} not found`);
     }
-
-    console.log('Deleted property:', result.rows[0]);
 
     res.sendStatus(204);
   } catch (err) {

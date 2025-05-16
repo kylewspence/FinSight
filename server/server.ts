@@ -52,7 +52,6 @@ app.use('/api/ai', aiRoutes);
 app.use('/api/rentcast/property', propertyRentcastRoute);
 app.use('/api/rentcast/value', valueRentcastRoute);
 app.get('/api/test', (req, res) => {
-  console.log('Test endpoint hit!');
   res.json({ message: 'API test endpoint working' });
 });
 

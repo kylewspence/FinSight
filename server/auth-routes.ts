@@ -24,7 +24,6 @@ const TOKEN_SECRET = process.env.TOKEN_SECRET || 'devsecret';
 // User Registration
 router.post('/register', async (req, res, next) => {
   try {
-    console.log('POST /register requested');
     const { userName, password } = req.body;
     if (!userName || !password) {
       console.warn('Missing required registration fields');
@@ -74,7 +73,6 @@ router.post('/register', async (req, res, next) => {
 // User Login
 router.post('/login', async (req, res, next) => {
   try {
-    console.log('POST /login requested');
     const { userName, password } = req.body;
     if (!userName || !password) {
       console.warn('Missing required login fields');
@@ -124,7 +122,6 @@ router.post('/login', async (req, res, next) => {
 // Get user Profile
 router.get('/profile', async (req, res, next) => {
   try {
-    console.log('GET /profile requested');
     const authHeader = req.headers.authorization;
     if (!authHeader) {
       console.warn('No authorization header');
@@ -140,8 +137,6 @@ router.get('/profile', async (req, res, next) => {
     try {
       const decoded = jwt.verify(token, TOKEN_SECRET) as JwtPayload;
       const userId = decoded.userId;
-
-      console.log('Token verified for user:', decoded.userName);
 
       const sql = `
             SELECT "userId", "userName", "createdAt"

@@ -10,8 +10,6 @@ const RENTCAST_BASE_URL = 'https://api.rentcast.io/v1';
 
 router.get('/', async (req, res, next) => {
   try {
-    console.log('GET /api/rentcast/value requested');
-
     const { address, propertyType, bedrooms, bathrooms, squareFootage } =
       req.query;
 
@@ -75,9 +73,6 @@ router.get('/', async (req, res, next) => {
       price: valueData.price || 0,
     };
 
-    console.log(
-      `Successfully retrieved property valuation data for: ${address}`
-    );
     res.json(formattedData);
   } catch (err) {
     console.error('Error in GET /api/rentcast/value:', err);
