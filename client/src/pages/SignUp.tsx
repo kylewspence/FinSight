@@ -62,7 +62,7 @@ export default function LoginForm({
       // Guest credentials for user with userId 1
       const guestData = {
         userName: 'Guest',
-        password: 'kdubs1',
+        password: 'password',
       };
 
       const req = {
