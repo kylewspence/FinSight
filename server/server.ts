@@ -2,7 +2,14 @@
 import 'dotenv/config';
 import express from 'express';
 import pg from 'pg';
-import { ClientError, errorMiddleware } from './lib/index.js';
+import { errorMiddleware } from './lib/index';
+import propertyRoutes from './routes/property-routes';
+import transactionRoutes from './routes/transaction-routes';
+import authRoutes from './auth-routes';
+import propertyRentcastRoute from './routes/rentcast/property';
+import valueRentcastRoute from './routes/rentcast/value';
+import investmentRoutes from './routes/investment-routes';
+import aiRoutes from './routes/ai-routes';
 
 const db = new pg.Pool({
   connectionString: process.env.DATABASE_URL,
@@ -24,6 +31,28 @@ app.use(express.json());
 
 app.get('/api/hello', (req, res) => {
   res.json({ message: 'Hello, World!' });
+});
+
+// Property Routes
+app.use('/api/properties', propertyRoutes);
+
+// Transaction Routes
+app.use('/api/transactions', transactionRoutes);
+
+// Auth Routes
+app.use('/api/auth', authRoutes);
+
+// Investment Routes
+app.use('/api/investments', investmentRoutes);
+
+// AI Routes
+app.use('/api/ai', aiRoutes);
+
+// RentCast Routes
+app.use('/api/rentcast/property', propertyRentcastRoute);
+app.use('/api/rentcast/value', valueRentcastRoute);
+app.get('/api/test', (req, res) => {
+  res.json({ message: 'API test endpoint working' });
 });
 
 /*
